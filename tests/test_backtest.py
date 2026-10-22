@@ -57,3 +57,17 @@ def test_evaluate_by_segment_that_is_part_of_the_key():
     df = _toy().assign(category="C")
     out = evaluate_by(df, "pred", "category")
     assert np.isclose(out.loc["C", "wape"], 0.10)
+
+
+def test_significance_detects_a_clearly_better_forecast():
+    from src.models.significance import compare
+    rng = np.random.default_rng(0); d = pd.date_range("2023-01-02", periods=7 * 12)
+    rows = []
+    for s in range(20):
+        y = 100 + rng.normal(0, 5, len(d))
+        rows.append(pd.DataFrame({"store_id": f"S{s}", "category": "C", "date": d, "y": y,
+                                  "good": y * (1 + rng.normal(0, .02, len(d))), "bad": y * (1 + rng.normal(0, .20, len(d)))}))
+    r = compare(pd.concat(rows), "good", "bad", n_boot=500)
+    assert r["delta_pts"] < 0 and r["ic95_sup"] < 0 and r["p_boot"] < 0.05 and r["semanas"] == 12
+    same = compare(pd.concat(rows), "good", "good", n_boot=200)
+    assert abs(same["delta_pts"]) < 1e-9

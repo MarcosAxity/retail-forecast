@@ -39,6 +39,13 @@ HOLIDAY_CAP = 14
 BUEN_FIN_CAP = 60
 CHRISTMAS_RANGE = (-14, 60)
 
+# Ventanas de evento (hipótesis tomadas de 2023; editables). Se usan solo para identificar días
+# de referencia "contaminados" por un evento, no para predecir su magnitud.
+EVENT_BUEN_FIN_PAD = 3                 # días antes/después del Buen Fin
+EVENT_XMAS_RANGE = (-13, 28)           # days_to_christmas: del 27-nov al 7-ene (-14 es el valor truncado)
+CLEAN_N_REFS = 12                      # semanas de referencia para el promedio limpio
+CLEAN_MIN_REFS = 2
+
 CALENDAR_FEATURES = [
     "day_of_week", "day_of_month", "is_weekend", "is_official_holiday", "is_payday",
     "is_navidad_season", "is_buen_fin", "is_semana_santa", "days_to_payday", "days_since_payday",
@@ -59,6 +66,9 @@ class FeatureConfig:
     # Base: formato y nivel socioeconómico (ver notebook 02). El resto se prueba por ablación.
     store_features: tuple[str, ...] = ("store_format", "socioeconomic_level")
     target: str = "amount_total"
+    # Opciones que se evalúan por ablación (apagadas por defecto):
+    use_seasonal_position: bool = False   # month y week_of_year (riesgo: índice de tiempo con 14 meses)
+    event_aware: bool = False             # rezagos "limpios" que excluyen días de evento
 
     @property
     def base_lag(self) -> int:
@@ -78,7 +88,9 @@ class FeatureConfig:
         w = list(self.windows)
         hist = [f"lag_{L}d" for L in self.seasonal_lags] + ["same_dow_mean"]
         hist += [f"roll_mean_{x}" for x in w] + [f"roll_std_{max(w)}", "trend_ratio"]
-        return CALENDAR_FEATURES + hist + ["has_promotion", f"promo_share_{max(w)}"] + self._store_cols()
+        extra = (["month", "week_of_year"] if self.use_seasonal_position else [])
+        extra += (["clean_same_dow_mean", "ref_event_share"] if self.event_aware else [])
+        return CALENDAR_FEATURES + hist + ["has_promotion", f"promo_share_{max(w)}"] + self._store_cols() + extra
 
 
 # ───────────────────────── calendario ─────────────────────────
@@ -203,6 +215,31 @@ def _history_features(df: pd.DataFrame, cfg: FeatureConfig) -> pd.DataFrame:
     return h
 
 
+def event_day_flag(cal: pd.DataFrame) -> pd.Series:
+    """True en los días dentro de una ventana de evento (Buen Fin ± pad; temporada navideña)."""
+    c = cal.set_index("date")
+    bf = (c.buen_fin_day > 0) | (c.days_to_buen_fin <= EVENT_BUEN_FIN_PAD) | (c.days_since_buen_fin <= EVENT_BUEN_FIN_PAD)
+    xm = c.days_to_christmas.between(*EVENT_XMAS_RANGE)
+    return (bf | xm).rename("is_event_day")
+
+
+def _event_aware_features(df: pd.DataFrame, cfg: FeatureConfig, cal: pd.DataFrame) -> pd.DataFrame:
+    """Promedio del mismo día de la semana de las últimas `CLEAN_N_REFS` semanas **excluyendo** los
+    días de referencia que caen en un evento, y proporción de los rezagos estacionales contaminados."""
+    ev = event_day_flag(cal); g = df.groupby(SERIES, sort=False)[cfg.target]
+    lags = [cfg.base_lag + 7 * k for k in range(CLEAN_N_REFS)]
+    vals = np.column_stack([g.shift(L).values for L in lags])
+    flag = np.column_stack([ev.reindex(df["date"] - pd.Timedelta(days=L)).fillna(False).values for L in lags]).astype(bool)
+    clean = np.where(flag, np.nan, vals); n_ok = (~np.isnan(clean)).sum(axis=1)
+    mean = np.full(len(df), np.nan); okm = n_ok >= CLEAN_MIN_REFS
+    mean[okm] = np.nanmean(clean[okm], axis=1)
+    out = pd.DataFrame(index=df.index)
+    out["clean_same_dow_mean"] = np.log(mean)
+    k = cfg.n_seasonal_lags
+    out["ref_event_share"] = flag[:, :k].mean(axis=1)
+    return out
+
+
 def build_features(panel: pd.DataFrame, cfg: FeatureConfig | None = None) -> pd.DataFrame:
     """Devuelve una fila por tienda × categoría × día con target, banderas, baselines y features."""
     cfg = cfg or FeatureConfig()
@@ -225,6 +262,10 @@ def build_features(panel: pd.DataFrame, cfg: FeatureConfig | None = None) -> pd.
     feats = pd.concat([hist.drop(columns=hist.filter(like="base_").columns), df[["has_promotion"]],
                        promo_share.rename(f"promo_share_{pm}")], axis=1)
     out = pd.concat([out, feats], axis=1)
+    if cfg.use_seasonal_position:
+        out["month"] = df["date"].dt.month.values; out["week_of_year"] = df["date"].dt.isocalendar().week.astype(int).values
+    if cfg.event_aware:
+        out = pd.concat([out, _event_aware_features(df, cfg, cal)], axis=1)
 
     # Variables de tienda / serie
     order = ["C", "C+", "B", "A/B"]
