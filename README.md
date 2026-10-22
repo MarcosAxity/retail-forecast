@@ -19,7 +19,7 @@ uv run python -c "import lightgbm"
 ```
 data/raw/        datos originales (transactions, stores, calendar)
 data/processed/  dataset maestro (generado)
-notebooks/       EDA
+notebooks/       01 EDA · 02 EDA complementario · 03 auditoría de replenishment_signal
 src/data/        carga y limpieza
 src/features/    ingeniería de variables
 src/models/      entrenamiento, evaluación y uplift
