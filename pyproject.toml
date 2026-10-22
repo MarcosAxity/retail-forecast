@@ -3,7 +3,7 @@ name = "retail-forecast"
 version = "0.1.0"
 description = "Forecast de ventas por tienda y categoría y medición de uplift promocional (retail México)"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12,<3.13"
 dependencies = [
     "pandas>=2.2",
     "numpy>=1.26",
