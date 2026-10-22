@@ -15,11 +15,22 @@ uv sync
 uv run python -c "import lightgbm"
 ```
 
+## Pipeline (Fases 0–2)
+```bash
+uv run python -m src.data.preprocess                    # panel maestro → data/processed/panel.parquet
+uv run python -m src.features.engineering --horizon 14  # features → data/processed/features_h14.parquet
+uv run python -m src.models.baselines --horizon 14      # baselines → outputs/reports/baselines_h14.csv
+uv run pytest                                           # tests (incluye pruebas anti-fuga temporal)
+```
+Decisiones clave: el target es `amount_total` (las unidades se derivan), `replenishment_signal` se excluye
+por fuga de información y la meta se mide en tienda × categoría × semana con WAPE contra baselines.
+
 ## Estructura
 ```
 data/raw/        datos originales (transactions, stores, calendar)
 data/processed/  dataset maestro (generado)
 notebooks/       01 EDA · 02 EDA complementario · 03 auditoría de replenishment_signal
+                 04 definición del target · 05 features y baselines
 src/data/        carga y limpieza
 src/features/    ingeniería de variables
 src/models/      entrenamiento, evaluación y uplift
