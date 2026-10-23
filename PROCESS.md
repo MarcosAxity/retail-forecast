@@ -29,6 +29,7 @@ criterios K1/K2 de la propuesta final. Los resultados que no cumplen un criterio
 ## Qué decidió y verificó la persona, y qué aportó la AI
 
 - La persona definió el problema de negocio, el alcance de cada fase, los criterios de aceptación y qué se conserva o se descarta; revisó cada resultado antes de cerrar la fase.
+- Como parte de la interacción, la persona definió un **rol** (científico de datos senior con experiencia en retail), dio un **contexto** (el objetivo de la prueba, las instrucciones del `README.md` y los documentos del proyecto como contexto) y definió **skills** para que la AI atendiera adecuadamente el proyecto.
 - La AI generó borradores de código y análisis. Nada se aceptó sin ejecutarse: toda cifra citada en `README.md` sale de `outputs/` y se regenera con el pipeline.
 - Controles: pruebas automáticas (`uv run pytest`, incluidas pruebas anti-fuga temporal que perturban el futuro y comprueban que ninguna feature cambia),
   reproducción exacta de las predicciones del backtest oficial en los pasos 09 y 10 (diferencia 0.0 MXN), y un manifiesto con sha256 de los artifacts.
