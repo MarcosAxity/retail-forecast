@@ -6,3 +6,4 @@ data/processed/
 outputs/models/*.joblib
 
 .env
+.pytest_cache/
