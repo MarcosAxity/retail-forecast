@@ -121,7 +121,7 @@ print('fechas con nulo (primeras):', t[t.replenishment_signal.isna()].date.value
 
 # **Hallazgo (fuga de información).** La señal es el promedio móvil de `total_transactions` de los 7 días `[t−5, t+1]`: contiene la demanda del día que se quiere predecir y la del siguiente. Usarla haría que las métricas fueran artificialmente buenas. **Se excluye** (sin importar el rezago) y sus nulos no se imputan. Sus nulos están al *inicio* del periodo y no al final como indica el diccionario.
 #
-# > Para mayor detalle ver `retail-forecast/notebooks/03_auditoria_replenishment_signal.ipynb`
+# > Para mayor detalle ver `scripts/04_auditoria_replenishment.py` y la sección 7 de `docs/EDA.md`
 
 # ## 8. Outliers
 
@@ -141,6 +141,6 @@ print('mínimo amount_total:', round(q.amount_total.min()), '| ceros:', int((q.a
 # 5. **Features** del target con rezago mínimo = horizonte (14 días) para evitar fuga temporal.
 # 6. **Promoción** con apariencia de aleatoria y efecto aparente ≈ 0 en monto: la Capa 2 debe reportar el efecto con intervalo de confianza y probar heterogeneidad, sin asumir que es positivo.
 
-# ## Notebooks complementarios
-# - **`02_eda_complementario.ipynb`:** pruebas formales de nulos (MCAR), consistencias monto/transacciones/ticket, calendario, atributos de tienda, aleatoriedad de la promoción y piso de ruido por granularidad.
-# - **`03_auditoria_replenishment_signal.ipynb`:** auditoría completa de la fuga de información de `replenishment_signal` (correlación cruzada, reconstrucción exacta e indirecta y prueba predictiva).
+# ## Scripts complementarios
+# - **`scripts/02_eda_nulos_consistencias_calendario.py` y `scripts/03_eda_tiendas_promocion_ruido.py`:** pruebas formales de nulos (MCAR), consistencias monto/transacciones/ticket, calendario, atributos de tienda, aleatoriedad de la promoción y piso de ruido por granularidad.
+# - **`scripts/04_auditoria_replenishment.py`:** auditoría completa de la fuga de información de `replenishment_signal` (correlación cruzada, reconstrucción exacta e indirecta y prueba predictiva).

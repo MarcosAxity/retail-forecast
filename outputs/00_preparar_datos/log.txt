@@ -1,4 +1,4 @@
-[00_preparar_datos] inicio 2026-10-23 00:15:53
+[00_preparar_datos] inicio 2026-10-23 01:03:21
 
 === python -m src.data.preprocess 
 Panel: (204000, 39), filas ausentes: 42

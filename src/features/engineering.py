@@ -10,7 +10,7 @@ Con múltiplos de 7 los rezagos caen siempre en el mismo día de la semana.
   nunca por posición de fila: una fila ausente deja el rezago correspondiente en NaN.
 - Ventanas móviles con `min_periods` explícito (no se rellenan faltantes).
 - No se usa ninguna columna observada el mismo día (unidades, ticket, efectivo, transacciones)
-  ni `replenishment_signal` (ver notebooks 01 y 03).
+  ni `replenishment_signal` (ver scripts 01 y 04).
 - `has_promotion` del día *t* se asume conocida al pronosticar (promoción planeada).
 - No hay `month`, `quarter`, `week_of_year` ni `store_id`: con 14 meses cada valor de calendario
   anual se observa una sola vez y el modelo lo usaría como índice de tiempo.
@@ -63,7 +63,7 @@ class FeatureConfig:
     n_seasonal_lags: int = 4              # rezagos base_lag, +7, +14, +21 …
     windows: tuple[int, ...] = (7, 28)    # ventanas móviles (días)
     min_periods_frac: float = 0.5
-    # Base: formato y nivel socioeconómico (ver notebook 02). El resto se prueba por ablación.
+    # Base: formato y nivel socioeconómico (ver script 03). El resto se prueba por ablación.
     store_features: tuple[str, ...] = ("store_format", "socioeconomic_level")
     target: str = "amount_total"
     # Opciones que se evalúan por ablación (apagadas por defecto):

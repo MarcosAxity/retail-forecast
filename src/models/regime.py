@@ -1,4 +1,4 @@
-"""Capa de reinicio de régimen (propuesta final, notebook 06b).
+"""Capa de reinicio de régimen (propuesta final, scripts/09_modelado_eventos.py).
 
 Problema: al terminar una temporada alta (Buen Fin, Navidad) los rezagos de 14–35 días y las
 ventanas de 28 días siguen conteniendo el pico, y el modelo lo proyecta hacia adelante
@@ -10,7 +10,7 @@ mismo día de la semana más recientes que caen fuera de toda ventana (hasta 16 
 mínimo 2). El pronóstico del modelo se multiplica por `limpio / sma4`. En cualquier otro caso el
 factor es exactamente 1, así que los periodos regulares no cambian.
 
-Dos ventanas de Navidad (decisión del 06b, sección 6):
+Dos ventanas de Navidad (decisión del paso 09, sección 6):
 - **referencia** (qué días contaminan los rezagos): 17 días antes a 14 después del 25-dic;
 - **destino** (qué fechas se corrigen): hasta 6 días después (31-dic), porque la venta real se
   reinicia el 1-ene.
@@ -19,7 +19,7 @@ Anti-fuga: el factor usa solo `y` con fecha <= t − 14 (rezagos desde `base_lag
 calendario conocidas de antemano.
 
 Límites: las ventanas son hipótesis tomadas de una sola ocurrencia de cada evento (2023). No deben
-dejar huecos entre la de Buen Fin y la de Navidad (ver 06b, sección 6.1).
+dejar huecos entre la de Buen Fin y la de Navidad (ver paso 09, sección 6.1).
 """
 from __future__ import annotations
 

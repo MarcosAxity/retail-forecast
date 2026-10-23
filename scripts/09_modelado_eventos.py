@@ -5,8 +5,8 @@ Ejecutar desde la raíz del repo:  uv run python scripts/09_modelado_eventos.py
 Entradas : Requiere outputs/reports/backtest_predictions_h14.parquet (paso 08).
 Salidas  : outputs/09_modelado_eventos/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 06b · Challenger para periodos de evento: reinicio de régimen y target multiplicativo
-# **El 06 sigue siendo la versión oficial.** Este notebook no modifica `06_modelado.ipynb`, ni `src/`, ni `outputs/`: todo se calcula en memoria. Un modelo de aquí solo sustituiría al del 06 si cumple los criterios de la sección 0.
+# # 09 · Challenger para periodos de evento: reinicio de régimen y target multiplicativo
+# **El paso 07 sigue siendo la versión oficial.** Este script no modifica `scripts/07_modelado_lightgbm.py`, ni `src/`, ni `outputs/reports/`: todo se calcula en memoria. Un modelo de aquí solo sustituiría al del paso 07 si cumple los criterios de la sección 0.
 #
 # Tiene tres partes:
 # 1. **Backtest continuo.** Se añaden folds *extra* que cubren los huecos de `FOLDS` (abr–may, jun–sep y las semanas pegadas a Buen Fin y Navidad), para predecir de punta a punta desde 2023-03-27 hasta 2024-02-25. Los 8 folds oficiales no cambian.
@@ -18,16 +18,16 @@ Salidas  : outputs/09_modelado_eventos/  (log.txt, tabla_XX.csv, fig_XX.png)
 #
 # **Qué se vio antes de definir las ideas.** El diagnóstico (histéresis tras Navidad, rampa navideña corta) salió de mirar las predicciones de REF en los folds de evento. Por eso esos folds **no son una validación independiente** de las ideas: la evidencia a favor de la idea 1 es el mecanismo, más que no cambie nada fuera de las ventanas de evento.
 #
-# **Roles de los folds.** Los 8 oficiales conservan su rol del 06 (desarrollo, confirmación, evento, post-evento). Los folds extra se **reportan y no se usan para seleccionar nada**.
+# **Roles de los folds.** Los 8 oficiales conservan su rol del paso 07 (desarrollo, confirmación, evento, post-evento). Los folds extra se **reportan y no se usan para seleccionar nada**.
 #
 # **Variantes**
-# - `REF`: el modelo del 06 (30 features, objetivo L2 en log, hiperparámetros de referencia).
+# - `REF`: el modelo del paso 07 (30 features, objetivo L2 en log, hiperparámetros de referencia).
 # - `V1 reinicio`: REF x factor de reinicio (sección 3).
 # - `V2 multiplicativo`: LightGBM con objetivo `log(y / base_sma4)`, pronóstico = `base_sma4 x exp(f)` (sección 4).
 # - `V1+V2`: ambas.
 #
 # **Criterios para que un challenger sustituya a REF** (las tres):
-# - **C1, sin regresión en regulares:** el WAPE medio de los folds regulares (oficiales y extra) no es más de 0.2 pts peor que REF. Es la regla del 06 usada en sentido inverso.
+# - **C1, sin regresión en regulares:** el WAPE medio de los folds regulares (oficiales y extra) no es más de 0.2 pts peor que REF. Es la regla del paso 07 usada en sentido inverso.
 # - **C2, post-evento:** el sesgo de cadena en `post_navidad_2024` queda entre −15 % y +15 % (REF: +57 %).
 # - **C3, eventos:** el WAPE de `buen_fin_2023` y `navidad_2023` no es más de 1 pt peor que REF. Cada evento ocurre una sola vez, así que se reportan y no se optimiza contra ellos.
 #
@@ -56,7 +56,7 @@ print(len(cols), 'features |', int(F.eligible.sum()), 'filas elegibles | datos:'
 
 # ## 1. Backtest continuo: cubrir los huecos de `FOLDS`
 
-# `FOLDS` (en `src/models/backtest.py`) tiene ocho ventanas de prueba y entre ellas quedan huecos, por eso en la gráfica del 06 no hay predicciones de julio ni de agosto. No es falta de datos: el panel tiene ventas todas esas semanas. Los huecos son:
+# `FOLDS` (en `src/models/backtest.py`) tiene ocho ventanas de prueba y entre ellas quedan huecos, por eso en la gráfica del paso 07 no hay predicciones de julio ni de agosto. No es falta de datos: el panel tiene ventas todas esas semanas. Los huecos son:
 #
 # | Hueco | Semanas | Comentario |
 # |---|---|---|
@@ -80,12 +80,12 @@ for a, b in zip(ALL, ALL[1:]):
     assert pd.Timestamp(b.start) == pd.Timestamp(a.end) + pd.Timedelta(days=1), (a.name, b.name)   # cobertura contigua
 cov = pd.DataFrame([{'fold': f.name, 'tipo': f.kind, 'inicio': f.start, 'fin': f.end,
                      'semanas': ((pd.Timestamp(f.end) - pd.Timestamp(f.start)).days + 1) // 7,
-                     'origen': 'oficial (06)' if f.name in OFFICIAL else 'extra (06b)'} for f in ALL]).set_index('fold')
+                     'origen': 'oficial (paso 07)' if f.name in OFFICIAL else 'extra (paso 09)'} for f in ALL]).set_index('fold')
 print('Cobertura contigua', ALL[0].start, '→', ALL[-1].end, '|', int(cov.semanas.sum()), 'semanas')
 show(cov)
 
 ref = T.run_backtest(F, cfg, P0, cols, ALL).rename(columns={'pred': 'pred_ref'})
-# Los folds oficiales deben reproducir exactamente el backtest guardado por train.py (el 06 no se ha movido).
+# Los folds oficiales deben reproducir exactamente el backtest guardado por train.py (paso 08; el modelo del paso 07 no se ha movido).
 off = pd.read_parquet(ROOT / 'outputs' / 'reports' / 'backtest_predictions_h14.parquet')[KEY + ['pred']]
 chk = ref[ref.fold.isin(OFFICIAL)].merge(off, on=KEY, how='outer', indicator=True)
 print('filas oficiales:', len(off), '| filas que no cuadran:', int((chk._merge != 'both').sum()), '| máx |Δ pronóstico| (MXN):', float((chk.pred_ref - chk.pred).abs().max()))
@@ -96,7 +96,7 @@ def weekly(df, cs):
 
 W0 = weekly(ref, ['pred_ref', 'base_sma4'])
 fig, ax = plt.subplots(figsize=(11, 3.8))
-for i, f in enumerate(EXTRA): ax.axvspan(pd.Timestamp(f.start), pd.Timestamp(f.end) + pd.Timedelta(days=1), color='#f2c14e', alpha=.22, lw=0, label='folds extra (06b)' if i == 0 else None)
+for i, f in enumerate(EXTRA): ax.axvspan(pd.Timestamp(f.start), pd.Timestamp(f.end) + pd.Timedelta(days=1), color='#f2c14e', alpha=.22, lw=0, label='folds extra (paso 09)' if i == 0 else None)
 ax.plot(W0.index, W0.y, 'k-o', ms=3, label='real'); ax.plot(W0.index, W0.pred_ref, color='#2a6fbb', marker='o', ms=3, ls='--', label='modelo (REF)'); ax.plot(W0.index, W0.base_sma4, color='#e07b39', marker='s', ms=3, ls=':', label='sma4')
 ax.set(title='Venta semanal total de la cadena con backtest continuo (M MXN)', ylabel='M MXN'); ax.legend(frameon=False, ncol=4, loc='upper left'); savefig()
 
@@ -110,12 +110,12 @@ rows = {'regulares oficiales': compare(r[off_reg], 'pred_ref', 'base_sma4'), 're
 S = pd.DataFrame(rows).T; S.columns = ['WAPE REF', 'WAPE sma4', 'Δ pts', 'IC95 inf', 'IC95 sup', 'p (bootstrap)', 'semanas', 'semanas REF mejor', 'p Wilcoxon']; show(S)
 
 # **Lectura.**
-# - Cubrir el año refuerza la conclusión del 06 sin cambiarla. Con 33 semanas regulares (18 oficiales + 15 extra), REF obtiene 7.34 % contra 7.81 % de `sma4` (−0.47 pts, IC95 [−0.78, −0.19], Wilcoxon p = 0.01, gana 20 de 33 semanas). Con las 18 originales el IC era [−1.11, −0.15] y p = 0.04.
+# - Cubrir el año refuerza la conclusión del paso 07 sin cambiarla. Con 33 semanas regulares (18 oficiales + 15 extra), REF obtiene 7.34 % contra 7.81 % de `sma4` (−0.47 pts, IC95 [−0.78, −0.19], Wilcoxon p = 0.01, gana 20 de 33 semanas). Con las 18 originales el IC era [−1.11, −0.15] y p = 0.04.
 # - La mejora en los folds extra regulares es menor (−0.32 pts, IC95 [−0.61, −0.03]) y no es pareja: REF gana en abr–may, jun–jul y jul–ago (6.7 % vs 7.3 %), y pierde contra `sma4` en `ago_sep_2023` (7.1 % vs 6.7 %; son solo 2 semanas, no concluyente).
 # - Las dos semanas que faltaban junto a eventos se comportan distinto. `pre_navidad_2023` es normal (8.8 %). `pre_buen_fin_2023` (30-oct a 5-nov) tiene WAPE 29.6 % y sesgo −29.6 %: la venta ya subió 33 % sobre la semana previa (532 → 706 M) y REF queda peor que `sma4` (22.1 %). En el backtest oficial esa semana no aparecía.
 
 # ## 2. Defecto que se quiere corregir
-# Del 06: en `post_navidad_2024` el modelo sobrepronostica +57 % (el mejor baseline es `snaive`, con 37.8 %). La causa es mecánica: los rezagos de 14–35 días y las ventanas de 28 días todavía contienen la rampa de diciembre, y el modelo, que nunca vio un fin de temporada alta en entrenamiento, los proyecta hacia adelante. La venta real vuelve de golpe al nivel base el 1 de enero. No hay forma de que un modelo aprenda ese reinicio con una sola temporada alta en los datos, por lo que se impone con una regla de calendario.
+# Del paso 07: en `post_navidad_2024` el modelo sobrepronostica +57 % (el mejor baseline es `snaive`, con 37.8 %). La causa es mecánica: los rezagos de 14–35 días y las ventanas de 28 días todavía contienen la rampa de diciembre, y el modelo, que nunca vio un fin de temporada alta en entrenamiento, los proyecta hacia adelante. La venta real vuelve de golpe al nivel base el 1 de enero. No hay forma de que un modelo aprenda ese reinicio con una sola temporada alta en los datos, por lo que se impone con una regla de calendario.
 
 # ## 3. Idea 1: reinicio de régimen
 # Se usan las ventanas de la Fase 2 (hipótesis tomadas de 2023): **Buen Fin −21 a +20 días** alrededor de su primer día y **Navidad −17 a +14 días** alrededor del 25 de diciembre. Para una fecha *fuera* de ventana cuyos 4 rezagos base (14, 21, 28 y 35 días) tocan una ventana, se reemplaza el promedio `sma4` por el promedio de los **4 rezagos más recientes que caen fuera de toda ventana** (hasta 16 semanas atrás, mínimo 2). El pronóstico del modelo se multiplica por `limpio / sma4`. Dentro de las ventanas no se corrige, porque ahí el nivel alto de los rezagos sí es información (la rampa es real). Fuera de ventana y sin contaminación el factor es exactamente 1, así que los periodos regulares no cambian por construcción.
@@ -173,13 +173,13 @@ meta = cov[['tipo', 'origen']]
 def tab(M, v):
     t = M.pivot_table(index='fold', columns='modelo', values=v).mul(100).reindex(order)[list(V)]
     return meta.join(t)
-print('WAPE % serie x semana (la métrica del 06):'); display(tab(M, 'wape').round(1))
+print('WAPE % serie x semana (la métrica del paso 07):'); display(tab(M, 'wape').round(1))
 print('Sesgo % de cadena (Σ(pronóstico − real) / Σreal; positivo = sobrepronóstico):'); display(tab(M, 'bias').round(1))
 print('WAPE % total de cadena x semana (error de nivel, sin el reparto entre series):'); display(tab(Mt, 'wape').round(1))
 
 # **Lectura.**
 # - **V1 solo cambia donde debía cambiar.** Es idéntico a REF en todos los folds regulares salvo la primera semana de `feb_2024` (el 12-feb tiene un rezago de 35 días que cae el 8-ene): 7.1 → 7.0 %.
-# - **Post-Navidad:** V1 baja el WAPE de 57.9 % a 14.8 % y el sesgo de cadena de +57.4 % a +13.6 %. El mejor baseline del 06 (`snaive`) tenía 37.8 %.
+# - **Post-Navidad:** V1 baja el WAPE de 57.9 % a 14.8 % y el sesgo de cadena de +57.4 % a +13.6 %. El mejor baseline del paso 07 (`snaive`) tenía 37.8 %.
 # - **V2 solo** mueve poco: Navidad 28.5 → 27.0 %, Buen Fin 34.5 → 34.0 %, `semana_santa_2023` 7.6 → 6.9 %. Empeora `pre_navidad_2023` (8.8 → 10.0 %, sesgo +8 %) y no corrige post-Navidad (59.8 %).
 # - **El error en eventos es de nivel de cadena.** En Buen Fin y Navidad el WAPE de total × semana (34.2 % y 27.4 %) es casi el mismo que el de serie × semana (34.5 % y 28.5 %): el problema no es el reparto entre tiendas y categorías, sino cuánto vende la cadena completa.
 
@@ -201,13 +201,13 @@ print('REF: WAPE medio regulares %.2f %% | sesgo post_navidad %.1f %%' % (w('REF
 ext_reg = [f.name for f in EXTRA if f.kind == 'regular']
 R = pd.DataFrame({m: {'desarrollo (pts vs REF)': w(m, T.DEV_FOLDS) - w('REF', T.DEV_FOLDS), 'confirmación (pts vs REF)': w(m, T.CONFIRM_FOLDS) - w('REF', T.CONFIRM_FOLDS),
                       'extra regulares (pts vs REF)': w(m, ext_reg) - w('REF', ext_reg)} for m in cand}).T
-print('Regla del 06 para adoptar un cambio: mejora >= %.1f pts en desarrollo (diferencia negativa = mejor).' % T.MIN_GAIN); display(R)
+print('Regla del paso 07 para adoptar un cambio: mejora >= %.1f pts en desarrollo (diferencia negativa = mejor).' % T.MIN_GAIN); display(R)
 tst = P[KEY].merge(F1[KEY + ['contaminado', 'clean_sma4']], on=KEY)
 print('Filas de prueba con rezagos contaminados y sin ancla limpio disponible:', int((tst.contaminado & tst.clean_sma4.isna()).sum()))
 
 # **Lectura.**
 # - **V1 cumple las tres condiciones**, pero C2 por poco: sesgo +13.6 % contra un máximo de 15 %. C1 y C3 se cumplen por construcción, porque V1 no cambia nada fuera de enero–febrero de 2024.
-# - **V2 solo no cumple C2** y su mejora en regulares queda bajo el umbral del 06: −0.17 pts en desarrollo contra los 0.2 requeridos (−0.04 en confirmación, −0.08 en los extra regulares). Con la regla ya fijada, no se adopta.
+# - **V2 solo no cumple C2** y su mejora en regulares queda bajo el umbral del paso 07: −0.17 pts en desarrollo contra los 0.2 requeridos (−0.04 en confirmación, −0.08 en los extra regulares). Con la regla ya fijada, no se adopta.
 # - **V1+V2** cumple las tres, pero lo que añade sobre V1 es mínimo (post-Navidad 14.8 → 14.5 %; Navidad −1.5 pts) y viene de V2, que por sí solo no pasa la regla de adopción.
 # - C2 y C3 se miden sobre un único evento, y el defecto de C2 se diagnosticó mirando ese mismo fold (sección 0). Cumplirlos prueba que se corrige un defecto mecánico, no que se generalice a 2024.
 
@@ -322,9 +322,9 @@ print('Sesgo post_navidad (%%): V1 %.1f | V1b %.1f' % (bb('V1 reinicio'), bb('V1
 
 # ## 7. Conclusiones
 
-# 1. **Backtest continuo:** no es necesario para el modelo, pero conviene. Cubre 48 semanas seguidas (2023-03-27 → 2024-02-25), reproduce exactamente los 8 folds oficiales y casi duplica las semanas regulares disponibles (18 → 33), con una conclusión más firme sobre REF. Además muestra la semana pre-Buen Fin, que el esquema oficial no cubría. Se deja como informe complementario: incorporarlo a `FOLDS` cambiaría las métricas oficiales del 06, así que queda como decisión aparte.
+# 1. **Backtest continuo:** no es necesario para el modelo, pero conviene. Cubre 48 semanas seguidas (2023-03-27 → 2024-02-25), reproduce exactamente los 8 folds oficiales y casi duplica las semanas regulares disponibles (18 → 33), con una conclusión más firme sobre REF. Además muestra la semana pre-Buen Fin, que el esquema oficial no cubría. Se deja como informe complementario: incorporarlo a `FOLDS` cambiaría las métricas oficiales del paso 07, así que queda como decisión aparte.
 # 2. **Idea 1 (reinicio de régimen):** corrige la histéresis sin cambiar los periodos regulares. V1 lleva post-Navidad de 57.9 % a 14.8 % de WAPE y de +57 % a +14 % de sesgo. V1b (fin de régimen el 31-dic) lo deja en 12.8 % y +11.3 %, y baja la semana del 1-ene de +75 % a +7 %.
 # 3. **Ventanas:** no son robustas en el sentido fijado. Reglas que hay que respetar: sin huecos entre la ventana de Buen Fin y la de Navidad, inicio de la de Buen Fin al menos 21 días antes de su primer día, y fin del régimen alineado con el día real del reinicio. Se conservan las ventanas de la Fase 2.
 # 4. **Idea 2 (multiplicativo):** no se justifica por sí sola (−0.17 pts en desarrollo contra los 0.2 requeridos; no toca post-Navidad ni los picos). No se adopta.
-# 5. **Estado frente al 06:** el 06 sigue como versión oficial. V1b cumple C1–C3 con margen en C2 (+11.3 % contra un máximo de 15 %) y los criterios de 6.2, pero todo se midió con una sola ocurrencia y el fold de post-Navidad ya se había usado para diagnosticar. Se propone como capa de reinicio candidata, y la validación real será la segunda ocurrencia (diciembre de 2024 – enero de 2025).
+# 5. **Estado frente al paso 07:** el paso 07 sigue como versión oficial. V1b cumple C1–C3 con margen en C2 (+11.3 % contra un máximo de 15 %) y los criterios de 6.2, pero todo se midió con una sola ocurrencia y el fold de post-Navidad ya se había usado para diagnosticar. Se propone como capa de reinicio candidata, y la validación real será la segunda ocurrencia (diciembre de 2024 – enero de 2025).
 # 6. **Pendiente:** ninguna variante mejora la magnitud del pico del Buen Fin (−59 %) ni la rampa navideña (−20 % y −32 %). Eso sigue dependiendo de escenarios e intervalos (p10/p90) y de una segunda ocurrencia.

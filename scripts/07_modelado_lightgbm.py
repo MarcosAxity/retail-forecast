@@ -5,8 +5,8 @@ Ejecutar desde la raíz del repo:  uv run python scripts/07_modelado_lightgbm.py
 Entradas : Escribe configs/model_params.json (hiperparámetros elegidos).
 Salidas  : outputs/07_modelado_lightgbm/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 06 · Modelo de pronóstico (Capa 1)
-# LightGBM global entrenado a nivel diario sobre `log(amount_total)`, con horizonte directo de 14 días. La meta se mide en **tienda × categoría × semana** con WAPE (sesgo siempre a la vista), contra los baselines del notebook 05.
+# # 07 · Modelo de pronóstico (Capa 1)
+# LightGBM global entrenado a nivel diario sobre `log(amount_total)`, con horizonte directo de 14 días. La meta se mide en **tienda × categoría × semana** con WAPE (sesgo siempre a la vista), contra los baselines del script 06.
 #
 # **Protocolo (definido antes de ver resultados)**
 # - **Desarrollo** (elegir variantes e hiperparámetros): `semana_santa_2023`, `may_jun_2023`, `sep_2023`.
@@ -87,7 +87,7 @@ show(A.rename(columns={'dev': 'WAPE desarrollo %', 'confirmación': 'WAPE confir
 
 # **Lectura.** Ninguna variante cumple la regla de adopción (mejora ≥ 0.2 pts en desarrollo), así que el modelo de referencia se queda con sus 30 features.
 # - **`month` + `week_of_year`** es lo más cercano (−0.14 en desarrollo, −0.24 en confirmación) pero queda bajo el umbral. Con solo 14 meses de datos funciona como índice temporal (cada mes aparece una o dos veces), por lo que no se adopta aunque apunte en la dirección correcta.
-# - **Quitar `has_promotion` y `promo_share_28` no cambia nada** (−0.01 pts): la promoción no aporta información predictiva sobre el monto. Es coherente con el hallazgo de los notebooks 01–04 (efecto de la promoción sobre el monto ≈ 0): lo que cambia con la promoción es el conteo de transacciones, no las ventas.
+# - **Quitar `has_promotion` y `promo_share_28` no cambia nada** (−0.01 pts): la promoción no aporta información predictiva sobre el monto. Es coherente con el hallazgo de los scripts 01–05 (efecto de la promoción sobre el monto ≈ 0): lo que cambia con la promoción es el conteo de transacciones, no las ventas.
 # - **Atributos adicionales de tienda** (región, m², cajas, farmacia, gasolinera, año) no ayudan (+0.04): el nivel de cada tienda ya queda capturado por sus rezagos y por `store_format`/`socioeconomic_level`.
 # - **Rezagos «limpios» que excluyen eventos** empeoran (+0.16 desarrollo, +0.94 confirmación) y las **variables de Buen Fin/Navidad** y las **distancias de calendario** sí aportan: quitarlas empeora, sobre todo en confirmación (+1.03 y +0.16). Se conservan.
 # - **Objetivos L1 y Huber** (más robustos a los picos) no mejoran la métrica, y L1 mueve el sesgo hacia el lado positivo.
@@ -126,7 +126,7 @@ reg = M[M.tipo == 'regular'].groupby('modelo').apply(lambda g: pd.Series({'WAPE 
 print('Folds regulares (media de folds):'); print(reg.loc[['modelo', 'sma4', 'snaive', 'ma28']].round(2).to_string())
 r = preds[preds.kind == 'regular']
 niv = pd.DataFrame({n: {'WAPE modelo %': evaluate(r, 'pred', n)['wape'] * 100, 'WAPE sma4 %': evaluate(r, 'base_sma4', n)['wape'] * 100} for n in ['serie × día', 'serie × semana', 'tienda × semana', 'categoría × semana', 'total × semana']}).T
-niv['piso de ruido %'] = [15.6, 6.5, 3.4, 2.1, 2.1]; print('\nPor nivel de agregación (folds regulares), contra el piso de ruido del notebook 02:'); print(niv.round(1).to_string())
+niv['piso de ruido %'] = [15.6, 6.5, 3.4, 2.1, 2.1]; print('\nPor nivel de agregación (folds regulares), contra el piso de ruido del script 03:'); print(niv.round(1).to_string())
 d_, w_ = aggregate(r, 'pred', 'serie × día'), aggregate(r, 'pred', 'serie × semana')
 print(f"\nR² serie × día: {r2_score(d_.y, d_.pred):.3f} | R² serie × semana: {r2_score(w_.y, w_.pred):.3f} (R² inflado por la diferencia de escala entre series; no es la métrica de decisión)")
 
@@ -143,7 +143,7 @@ ax.set(title='Venta semanal total de la cadena en los folds de prueba (M MXN)', 
 show(sem)
 
 # ### 4.1 Unidades derivadas del monto
-# Según la decisión del notebook 04: unidades = monto pronosticado ÷ precio de la serie (con datos hasta el corte de cada fold), evaluado donde `units_sold` existe.
+# Según la decisión del script 05: unidades = monto pronosticado ÷ precio de la serie (con datos hasta el corte de cada fold), evaluado donde `units_sold` existe.
 
 rows = []
 for f in [f for f in FOLDS if f.kind == 'regular']:

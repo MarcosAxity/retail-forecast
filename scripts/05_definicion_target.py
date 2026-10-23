@@ -5,7 +5,7 @@ Ejecutar desde la raíz del repo:  uv run python scripts/05_definicion_target.py
 Entradas : Ninguno (lee data/raw).
 Salidas  : outputs/05_definicion_target/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 04 · Definición del target
+# # 05 · Definición del target
 # **Pregunta:** ¿el modelo debe predecir `total_transactions`, `amount_total` o `units_sold`?
 #
 # **Estructura:**
@@ -88,7 +88,7 @@ sc['veredicto'] = ['TARGET', 'derivar del monto', 'no pronosticar (artefacto de 
 # **Lectura.**
 # - **`amount_total`:** sin nulos, consistente con sus componentes y **sin efecto aparente de la promoción** (+0.03 %, IC 95 % de −0.4 % a +0.5 %).
 # - **`units_sold`:** 3 % de nulos y más ruidosa (σ = 0.28 frente a 0.19), lo que fija un piso de WAPE de ≈ 22 % contra ≈ 15 % del monto. Tampoco muestra efecto de promoción (+0.3 %, IC 95 % de −0.2 % a +0.8 %).
-# - **`total_transactions`:** parece subir **22 %** con la promoción (IC 95 % de 21.6 % a 22.7 %), pero el dinero cobrado y las transacciones pagadas (+0.1 %) no se mueven: es el artefacto descrito en los notebooks 01 y 02. Pronosticarla significaría aprender un defecto de captura.
+# - **`total_transactions`:** parece subir **22 %** con la promoción (IC 95 % de 21.6 % a 22.7 %), pero el dinero cobrado y las transacciones pagadas (+0.1 %) no se mueven: es el artefacto descrito en los scripts 01 y 02. Pronosticarla significaría aprender un defecto de captura.
 # - **Efectivo + tarjeta** es la menos ruidosa (σ = 0.15), pero tiene 6 % de nulos (por el efectivo), mide tráfico y no la venta que consumen finanzas e inventario. Que una variable sea más fácil de predecir no la hace más útil para el negocio: los errores **no son comparables entre variables**.
 #
 # **Conclusión:** `amount_total` es la única candidata completa, consistente, sin artefactos y alineada con el uplift de la Fase 4, que también se mide sobre el monto.

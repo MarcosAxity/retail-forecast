@@ -5,17 +5,17 @@ Ejecutar desde la raíz del repo:  uv run python scripts/10_comparacion_modelos.
 Entradas : Requiere outputs/reports/backtest_predictions_h14.parquet (paso 08).
 Salidas  : outputs/10_comparacion_modelos/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 07 · Propuesta final y competencia de modelos
-# Este notebook (1) fija la propuesta final con lo que se alcanzó a probar en los notebooks 06 y 06b, (2) la pone a competir contra otros modelos con las mismas reglas y (3) argumenta por qué la métrica principal es WAPE y no otra. No modifica el 06 ni el 06b.
+# # 10 · Propuesta final y competencia de modelos
+# Este script (1) fija la propuesta final con lo que se alcanzó a probar en los pasos 07 y 09, (2) la pone a competir contra otros modelos con las mismas reglas y (3) argumenta por qué la métrica principal es WAPE y no otra. No modifica el paso 07 ni el paso 09.
 
 # ## 1. Propuesta final
-# **Modelo:** LightGBM global sobre `log(amount_total)` diario, horizonte directo de 14 días, con las 30 features y los hiperparámetros de referencia del 06, **más la capa de reinicio de régimen** (V1b del 06b, código en `src/models/regime.py`).
+# **Modelo:** LightGBM global sobre `log(amount_total)` diario, horizonte directo de 14 días, con las 30 features y los hiperparámetros de referencia del paso 07, **más la capa de reinicio de régimen** (V1b del paso 09, código en `src/models/regime.py`).
 #
 # | Decisión | Qué se hace | Por qué (evidencia) |
 # |---|---|---|
-# | Modelo base | LightGBM, objetivo L2 en log, 30 features | 06: WAPE 7.5 % contra 8.2 % de `sma4` en regulares; ninguna ablación ni hiperparámetro superó la regla de 0.2 pts |
-# | Capa de reinicio | Tras la temporada alta, el pronóstico se reescala con `sma4 limpio / sma4`; fin de régimen el 31-dic | 06b: post-Navidad de 57.9 % a 12.8 % de WAPE, regulares sin cambio (−0.00 pts) |
-# | Ventanas | Buen Fin −21/+20 días, Navidad −17/+14 (referencia) y −17/+6 (destino) | 06b §6.1: no deben dejar huecos entre ellas; se conservan las de la Fase 2 |
+# | Modelo base | LightGBM, objetivo L2 en log, 30 features | paso 07: WAPE 7.5 % contra 8.2 % de `sma4` en regulares; ninguna ablación ni hiperparámetro superó la regla de 0.2 pts |
+# | Capa de reinicio | Tras la temporada alta, el pronóstico se reescala con `sma4 limpio / sma4`; fin de régimen el 31-dic | paso 09: post-Navidad de 57.9 % a 12.8 % de WAPE, regulares sin cambio (−0.00 pts) |
+# | Ventanas | Buen Fin −21/+20 días, Navidad −17/+14 (referencia) y −17/+6 (destino) | paso 09 §6.1: no deben dejar huecos entre ellas; se conservan las de la Fase 2 |
 # | Target multiplicativo (V2) | **No se adopta** | −0.17 pts en desarrollo contra los 0.2 requeridos; no toca post-Navidad ni los picos |
 # | Cuantiles p10/p90 | **Pendiente** | Sin ellos, el pico del Buen Fin (−59 %) y la rampa navideña (−20 % y −32 %) quedan sin cuantificar |
 #
@@ -24,13 +24,13 @@ Salidas  : outputs/10_comparacion_modelos/  (log.txt, tabla_XX.csv, fig_XX.png)
 # **Límites que se mantienen:** cada evento aparece una sola vez; el reinicio se diagnosticó sobre el mismo fold donde se mide; el sobrepronóstico de enero (+10 % a +14 %) queda sin explicar del todo (ancla de octubre y features contaminadas).
 
 # ## 2. Protocolo de la competencia (fijado antes de ejecutar)
-# **Mismas reglas para todos.** Los 14 folds del backtest continuo (48 semanas, 06b §1), horizonte de 14 días, reentrenamiento por fold con fechas ≤ inicio − 14. Los modelos de ML reciben las mismas 30 features y el mismo objetivo `log(y)`. Cada competidor recibe una rejilla pequeña de hiperparámetros evaluada **solo en los folds de desarrollo** (la misma regla que se usó con LightGBM); confirmación, eventos y folds extra solo se reportan.
+# **Mismas reglas para todos.** Los 14 folds del backtest continuo (48 semanas, paso 09 §1), horizonte de 14 días, reentrenamiento por fold con fechas ≤ inicio − 14. Los modelos de ML reciben las mismas 30 features y el mismo objetivo `log(y)`. Cada competidor recibe una rejilla pequeña de hiperparámetros evaluada **solo en los folds de desarrollo** (la misma regla que se usó con LightGBM); confirmación, eventos y folds extra solo se reportan.
 #
 # **Competidores**
 # - Baselines: `sma4`, `snaive` (mismo día de hace 14 días), `ma28`.
 # - Estadístico: ETS por serie (Holt-Winters aditivo en log, tendencia amortiguada, estacionalidad semanal). Usa solo la historia de la propia serie.
 # - ML global: Ridge (lineal, con dummies de día de la semana), Random Forest y XGBoost.
-# - LightGBM del 06, solo y con la capa de reinicio (propuesta final).
+# - LightGBM del paso 07, solo y con la capa de reinicio (propuesta final).
 #
 # **La capa de reinicio no es exclusiva de nuestro modelo.** Para no comparar «nuestro modelo + capa» contra competidores sin ella, la competencia se reporta en dos universos: sin capa para nadie y con la misma capa aplicada a todos. La capa es un factor multiplicativo que depende solo de calendario y de historia con ≥ 14 días de rezago, así que se puede aplicar a cualquier pronóstico.
 #
@@ -85,12 +85,12 @@ for n in ('ridge', 'xgb', 'rf'):
     P = P.merge(cached(f'pred_{n}', lambda n=n: C.run_backtest_model(F, 14, cols, ALL_FOLDS, n, **HP[n])).drop(columns='fold'), on=KEY, how='left')
 P = P.merge(cached('pred_ets', lambda: C.run_ets(F, 14, ALL_FOLDS)).drop(columns='fold'), on=KEY, how='left')
 fac = F[KEY].assign(fac=R.final_factor(F)); P = P.merge(fac, on=KEY, how='left')
-MODELS = {'sma4': 'base_sma4', 'snaive (14 d)': 'base_snaive', 'ma28': 'base_ma28', 'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (06)': 'pred_lgbm'}
+MODELS = {'sma4': 'base_sma4', 'snaive (14 d)': 'base_snaive', 'ma28': 'base_ma28', 'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (paso 07)': 'pred_lgbm'}
 for c_ in MODELS.values(): P[c_ + '_r'] = P[c_] * P.fac
 ALLC = list(MODELS.values()) + [c_ + '_r' for c_ in MODELS.values()]
 print('filas de prueba:', len(P), '| NaN por columna:', {c_: int(P[c_].isna().sum()) for c_ in ALLC if P[c_].isna().any()})
 off = pd.read_parquet(ROOT / 'outputs' / 'reports' / 'backtest_predictions_h14.parquet')[KEY + ['pred']]
-chk = P[P.fold.isin(OFFICIAL)].merge(off, on=KEY); print('LightGBM reproduce el backtest oficial del 06: máx |Δ| =', float((chk.pred_lgbm - chk.pred).abs().max()), 'MXN')
+chk = P[P.fold.isin(OFFICIAL)].merge(off, on=KEY); print('LightGBM reproduce el backtest oficial del paso 07: máx |Δ| =', float((chk.pred_lgbm - chk.pred).abs().max()), 'MXN')
 print('Tiempo de backtest por modelo (s):', {k.replace('pred_', ''): round(v) for k, v in TIMES.items() if k.startswith('pred_')})
 
 # ## 4. Resultados
@@ -120,11 +120,11 @@ rows = []
 for k in MODELS:
     rows.append({'modelo': k, 'WAPE %': grp(k, reg_f), 'sesgo %': grp(k, reg_f, 'sesgo'), 'MAE (MXN)': grp(k, reg_f, 'mae'), 'vs sma4 (pts)': grp(k, reg_f) - grp('sma4', reg_f),
                  'folds en que gana a sma4': int(sum(MF[(MF.modelo == k) & (MF.fold == f)].wape.iloc[0] < MF[(MF.modelo == 'sma4') & (MF.fold == f)].wape.iloc[0] for f in reg_f)),
-                 'tiempo backtest (s)': TIMES.get({'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (06)': 'pred_lgbm'}.get(k, ''), np.nan)})
+                 'tiempo backtest (s)': TIMES.get({'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (paso 07)': 'pred_lgbm'}.get(k, ''), np.nan)})
 R1 = pd.DataFrame(rows).set_index('modelo').sort_values('WAPE %'); R1.round(3).to_csv(out_dir() / 'comparacion_regulares.csv'); show(R1.round(2))
 
 # **Lectura.**
-# - Los cuatro modelos de ML quedan en un rango de 0.07 pts (7.26–7.33 %) y todos mejoran a `sma4` (7.77 %) en 6–7 de los 9 folds. Ridge es nominalmente el mejor (7.26 %) y LightGBM el tercero (7.31 %). Esas diferencias son mucho menores que la variación entre folds (desviación estándar de ≈ 0.5 pts).
+# - Los cuatro modelos de ML quedan en un rango de 0.08 pts (7.26–7.34 %) y todos mejoran a `sma4` (7.77 %) en 6–7 de los 9 folds. Ridge es nominalmente el mejor (7.26 %) y LightGBM el segundo (7.31 %). Esas diferencias son mucho menores que la variación entre folds (desviación estándar de ≈ 0.5 pts).
 # - ETS por serie (9.47 %) y `snaive` (9.09 %) quedan peor que `sma4`. ETS no ve calendario (quincenas, festivos) y subpronostica −4 %.
 # - `ma28` es prácticamente igual que `sma4`.
 # - En cómputo, Ridge tarda unos segundos, XGBoost ~13 s y Random Forest ~54 s en los 14 folds; ETS ~69 s.
@@ -139,21 +139,21 @@ print('WAPE % y sesgo % en post_navidad_2024:'); E2 = evtab(['post_navidad_2024'
 print('WAPE % por fold de evento, sin capa:'); display(MF[MF.col.isin(MODELS.values()) & MF.fold.isin(ev_f)].pivot_table(index='modelo', columns='fold', values='wape')[[f for f in ev_f]].loc[list(MODELS)].round(1))
 
 # **Lectura.**
-# - **En eventos ningún modelo de ML supera a los baselines.** WAPE medio de los 4 folds de evento, sin capa: `ma28` 22.2 %, `sma4` 23.0 %, XGBoost 24.3 %, LightGBM 25.4 %, Random Forest 29.3 %, Ridge 35.3 % y ETS 38.3 %. Con capa: `ma28` 20.1 %, `sma4` 20.6 %, XGBoost 22.2 % y LightGBM 23.4 %. Son cuatro folds con una sola ocurrencia de cada evento, así que no se usan para elegir, pero el patrón coincide con el del 06.
+# - **En eventos ningún modelo de ML supera a los baselines.** WAPE medio de los 4 folds de evento, sin capa: `ma28` 22.2 %, `sma4` 23.0 %, XGBoost 24.6 %, LightGBM 25.4 %, Random Forest 29.3 %, Ridge 35.3 % y ETS 38.3 %. Con capa: `ma28` 20.1 %, `sma4` 20.6 %, XGBoost 22.4 % y LightGBM 23.4 %. Son cuatro folds con una sola ocurrencia de cada evento, así que no se usan para elegir, pero el patrón coincide con el del paso 07.
 # - **Los modelos más flexibles fallan en las semanas de rampa.** En `pre_navidad_2023` Ridge llega a 42.2 % y ETS a 62.0 % (LightGBM 8.8 %, XGBoost 9.0 %, `sma4` 9.2 %); en `pre_buen_fin_2023` Ridge tiene 34.3 % contra 29.6 % de LightGBM y 22.1 % de `sma4`.
-# - **Post-Navidad:** la capa ayuda a casi todos: LightGBM 57.9 → 12.8 %, XGBoost 58.5 → 13.1 %, Random Forest 57.1 → 12.4 %, `sma4` 62.9 → 11.7 %. Con la misma capa, LightGBM queda en 3er lugar de 8, a 1.1 pts de `sma4 + capa`. Es un solo fold de 5 semanas.
+# - **Post-Navidad:** la capa ayuda a casi todos: LightGBM 57.9 → 12.8 %, XGBoost 57.4 → 12.0 %, Random Forest 57.1 → 12.3 %, `sma4` 62.9 → 11.7 %. Con la misma capa, LightGBM queda en 4.º lugar de 8, a 1.1 pts de `sma4 + capa`. Es un solo fold de 5 semanas.
 # - ETS sigue en 74 % con capa: la capa se diseñó sobre `sma4` y no corrige el estado interno de ETS, que arrastra el pico.
 
 # ### 4.3 Barras: WAPE medio en regulares
 
 fig, ax = plt.subplots(figsize=(9, 3.6)); r = R1.sort_values('WAPE %', ascending=False)
-ax.barh(r.index, r['WAPE %'], color=['#2a6fbb' if i == 'LightGBM (06)' else '#9aa5b1' for i in r.index]); ax.axvline(10, color='#c0392b', ls=':', lw=1); ax.text(10.1, -0.4, 'meta 10 %', color='#c0392b', fontsize=8)
+ax.barh(r.index, r['WAPE %'], color=['#2a6fbb' if i == 'LightGBM (paso 07)' else '#9aa5b1' for i in r.index]); ax.axvline(10, color='#c0392b', ls=':', lw=1); ax.text(10.1, -0.4, 'meta 10 %', color='#c0392b', fontsize=8)
 for i, v in enumerate(r['WAPE %']): ax.text(v + 0.05, i, f'{v:.1f}', va='center', fontsize=8)
 ax.set(title='WAPE medio en periodos regulares, serie × semana (%)', xlim=(0, 11)); savefig()
 
 # ## 5. ¿Las diferencias son reales? Propuesta final contra cada competidor (regulares)
 
-rg = P[P.kind == 'regular']; others = [k for k in MODELS if k != 'LightGBM (06)']
+rg = P[P.kind == 'regular']; others = [k for k in MODELS if k != 'LightGBM (paso 07)']
 S = pd.DataFrame({k + ' + capa': compare(rg, 'pred_lgbm_r', MODELS[k] + '_r') for k in others}).T
 S.columns = ['WAPE propuesta', 'WAPE competidor', 'Δ pts (propuesta − comp.)', 'IC95 inf', 'IC95 sup', 'p (bootstrap)', 'semanas', 'semanas propuesta mejor', 'p Wilcoxon']
 pv = S['p (bootstrap)'].sort_values(); m_ = len(pv); adj = pd.Series(np.minimum(1, np.maximum.accumulate([(m_ - i) * v for i, v in enumerate(pv.values)])), index=pv.index)
@@ -161,7 +161,7 @@ S['p Holm'] = adj.reindex(S.index); S.sort_values('Δ pts (propuesta − comp.)'
 
 # **Lectura.**
 # - La propuesta supera con significancia a `sma4`, `ma28`, `snaive` y ETS (Δ de −0.46, −0.55, −1.78 y −2.25 pts; IC95 completamente bajo 0; p Holm < 0.01).
-# - Contra XGBoost y Random Forest no hay diferencia distinguible (Δ −0.03 con IC95 [−0.06, +0.01] y +0.01 con [−0.09, +0.11]).
+# - Contra XGBoost y Random Forest no hay diferencia distinguible (Δ −0.03 con IC95 [−0.09, +0.02] y +0.00 con [−0.10, +0.10]).
 # - **Contra Ridge** el Δ es +0.18 pts (IC95 [−0.05, +0.40]). El bootstrap no excluye 0, pero Wilcoxon sí (p < 0.01): Ridge gana en 26 de las 33 semanas con márgenes pequeños y consistentes. K1, fijado sobre el IC, se cumple; pero no se puede afirmar que la propuesta sea mejor que Ridge en periodos regulares, y lo más probable es que Ridge sea ligeramente mejor.
 # - La tabla usa el WAPE agrupado de todas las semanas (7.34 %), por eso difiere un poco de la media por fold de 4.1 (7.31 %).
 
@@ -179,11 +179,11 @@ S['p Holm'] = adj.reindex(S.index); S.sort_values('Δ pts (propuesta − comp.)'
 # - **MAPE** da el mismo peso a cada fila, es inestable con ventas pequeñas y favorece pronosticar de menos (el error de subpronóstico está acotado en 100 % y el de sobrepronóstico no). En inventario eso esconde faltantes.
 # - **MAE y RMSE** dependen de la escala: se dominan por las series grandes y no se pueden comparar entre niveles de agregación. RMSE además se dispara con los picos de evento.
 # - **sMAPE** corrige la asimetría solo en parte y sigue sin ponderar por volumen.
-# - **R²** se infla con la diferencia de escala entre series (0.97 en el 06 incluso con baselines que pasaban el umbral) y no discrimina entre modelos.
+# - **R²** se infla con la diferencia de escala entre series (0.97 en el paso 07 incluso con baselines que pasaban el umbral) y no discrimina entre modelos.
 # - **MASE/RMSSE** exigen una escala de referencia dentro de la muestra por serie; el cociente WAPE del modelo / WAPE de `sma4` («habilidad») da la misma lectura sin ese costo.
 # - **Pinball y cobertura** son las métricas correctas para p10/p90; entrarán cuando se construyan los cuantiles.
 #
-# **Qué acompaña a WAPE:** el **sesgo** (WAPE es simétrico y oculta si se sobre o subpronostica, que cuesta distinto en inventario), el WAPE por nivel de agregación (contra el piso de ruido del 06) y el **WAPE asimétrico** (subpronóstico pesa 2×) como prueba de robustez, porque no hay costos de negocio reales.
+# **Qué acompaña a WAPE:** el **sesgo** (WAPE es simétrico y oculta si se sobre o subpronostica, que cuesta distinto en inventario), el WAPE por nivel de agregación (contra el piso de ruido del paso 03) y el **WAPE asimétrico** (subpronóstico pesa 2×) como prueba de robustez, porque no hay costos de negocio reales.
 
 # ### 6.1 ¿Cambia el ranking según la métrica? (regulares y eventos, modelos sin capa)
 
@@ -218,15 +218,15 @@ floor = {'serie × día': 15.6, 'serie × semana': 6.5, 'tienda × semana': 3.4,
 rows = {}
 for l, k_ in keys.items():
     A = agg(k_); A = A[A.kind == 'regular']; mf = metric_frame(A, ['pred_lgbm_r', 'base_sma4_r', 'base_sma4']); w = mf.groupby('col').wape.mean()
-    rows[l] = {'propuesta (LightGBM + capa)': w['pred_lgbm_r'], 'sma4': w['base_sma4'], 'piso de ruido (06, en muestra)': floor[l]}
-A = D[D.kind == 'regular']; mf = metric_frame(A, ['pred_lgbm_r', 'base_sma4']); w = mf.groupby('col').wape.mean(); rows['serie × día'] = {'propuesta (LightGBM + capa)': w['pred_lgbm_r'], 'sma4': w['base_sma4'], 'piso de ruido (06, en muestra)': floor['serie × día']}
+    rows[l] = {'propuesta (LightGBM + capa)': w['pred_lgbm_r'], 'sma4': w['base_sma4'], 'piso de ruido (paso 03, en muestra)': floor[l]}
+A = D[D.kind == 'regular']; mf = metric_frame(A, ['pred_lgbm_r', 'base_sma4']); w = mf.groupby('col').wape.mean(); rows['serie × día'] = {'propuesta (LightGBM + capa)': w['pred_lgbm_r'], 'sma4': w['base_sma4'], 'piso de ruido (paso 03, en muestra)': floor['serie × día']}
 show(pd.DataFrame(rows).T.loc[list(floor)].round(1))
 
 # **Lectura.** La propuesta queda a 1.0 pt del piso de ruido en serie × día (16.6 % vs 15.6 %), a 0.8 pts en serie × semana (7.3 % vs 6.5 %) y a 0.5 pts en tienda × semana y en categoría × semana. La ventaja sobre `sma4` es de 2.5, 0.5, 0.9 y 1.4 pts en los niveles de serie × día, serie × semana, tienda × semana y categoría o total × semana. Se evalúa en serie × semana porque es el grano de la decisión de reposición y el más fino en que el piso de ruido (6.5 %) deja alcanzar la meta de 10 %; en serie × día el piso es 15.6 % y la métrica ya no discrimina.
 
 # ## 7. Veredicto con los criterios fijados en la sección 2
 
-fin = 'LightGBM (06) + capa'; comp = [k + ' + capa' for k in others]
+fin = 'LightGBM (paso 07) + capa'; comp = [k + ' + capa' for k in others]
 gap = grp(fin, reg_f) - min(grp(c_, reg_f) for c_ in comp); best = min(comp, key=lambda c_: grp(c_, reg_f))
 sig_worse = S[S['IC95 inf'] > 0].index.tolist(); sig_better = S[S['IC95 sup'] < 0].index.tolist(); tied = S[(S['IC95 inf'] <= 0) & (S['IC95 sup'] >= 0)].index.tolist()
 post = {m: grp(m, ['post_navidad_2024']) for m in comp + [fin]}; rank_post = sorted(post, key=post.get).index(fin) + 1
@@ -236,9 +236,9 @@ V_ = pd.Series({'WAPE regulares propuesta (%)': grp(fin, reg_f), 'mejor competid
                 'puesto en post-evento con capa (de %d)' % len(post): rank_post, 'K2 (post-evento)': 'cumple' if rank_post <= 2 else 'NO cumple'}); show(V_.to_frame('resultado'))
 
 if tied:
-    base_names = [t_.replace(' + capa', '') for t_ in tied] + ['LightGBM (06)']
+    base_names = [t_.replace(' + capa', '') for t_ in tied] + ['LightGBM (paso 07)']
     sec = pd.DataFrame({k: {'WAPE regulares (%)': grp(k + ' + capa', reg_f), 'desv. estándar entre folds regulares (pts)': MF[(MF.modelo == k + ' + capa') & MF.fold.isin(reg_f)].wape.std(),
-                            'tiempo de backtest (s)': TIMES.get({'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (06)': 'pred_lgbm'}.get(k) or '', np.nan)} for k in base_names}).T
+                            'tiempo de backtest (s)': TIMES.get({'ETS por serie': 'pred_ets', 'Ridge': 'pred_ridge', 'Random Forest': 'pred_rf', 'XGBoost': 'pred_xgb', 'LightGBM (paso 07)': 'pred_lgbm'}.get(k) or '', np.nan)} for k in base_names}).T
     print('Criterios secundarios (K4) entre la propuesta y sus empates técnicos:'); display(sec.round(2))
 
 Wc = D.groupby('semana')[['y', 'pred_lgbm_r', 'pred_xgb_r', 'pred_ets_r', 'base_sma4']].sum().div(1e6)
@@ -248,14 +248,14 @@ for c_, l_, col_ in [('pred_lgbm_r', 'LightGBM + capa (propuesta)', '#2a6fbb'), 
 ax.set(title='Venta semanal total de la cadena: real vs. propuesta y competidores (M MXN)', ylabel='M MXN'); ax.legend(frameon=False, ncol=3, loc='upper left'); savefig()
 
 # **Lectura.**
-# - **K1 se cumple** (0.06 pts de diferencia con el mejor, Ridge; ningún competidor la supera con significancia según el IC95), con la salvedad de Wilcoxon contra Ridge (sección 5).
-# - **K2 no se cumple:** con la misma capa, la propuesta es 3ª de 8 en post-Navidad (12.8 %); `sma4 + capa` obtiene 11.7 % y Random Forest + capa 12.4 %.
+# - **K1 se cumple** (0.paso 07 pts de diferencia con el mejor, Ridge; ningún competidor la supera con significancia según el IC95), con la salvedad de Wilcoxon contra Ridge (sección 5).
+# - **K2 no se cumple:** con la misma capa, la propuesta es 4.ª de 8 en post-Navidad (12.8 %); `sma4 + capa` obtiene 11.7 %, XGBoost + capa 12.0 % y Random Forest + capa 12.3 %.
 # - **K3 (solo reporte):** en eventos `ma28` y `sma4`, con y sin capa, superan a los modelos de ML.
-# - **K4:** hay empate técnico con Ridge, Random Forest y XGBoost. Ridge es el más rápido pero el menos estable entre folds (desviación 0.75 pts) y falla en las rampas (42.2 % en `pre_navidad_2023`, 35.3 % medio en eventos). Random Forest es unas 4 veces más lento que XGBoost y no aporta ventaja. XGBoost y LightGBM son equivalentes: se conserva LightGBM por continuidad con el protocolo, las ablaciones y el SHAP del 06, no por superioridad.
+# - **K4:** hay empate técnico con Ridge, Random Forest y XGBoost. Ridge es el más rápido pero el menos estable entre folds (desviación 0.75 pts) y falla en las rampas (42.2 % en `pre_navidad_2023`, 35.3 % medio en eventos). Random Forest es unas 5 veces más lento que XGBoost y no aporta ventaja. XGBoost y LightGBM son equivalentes: se conserva LightGBM por continuidad con el protocolo, las ablaciones y el SHAP del paso 07, no por superioridad.
 
 # ## 8. Conclusiones
 
-# 1. **Propuesta final:** LightGBM del 06 + capa de reinicio de régimen (V1b, `src/models/regime.py`). Se conserva, pero con una afirmación más acotada que «es el mejor».
+# 1. **Propuesta final:** LightGBM del paso 07 + capa de reinicio de régimen (V1b, `src/models/regime.py`). Se conserva, pero con una afirmación más acotada que «es el mejor».
 # 2. **Lo que sí se puede afirmar:** en periodos regulares supera con significancia a `sma4`, `ma28`, `snaive` y ETS (WAPE 7.3 % contra 7.8 %, 7.8 %, 9.1 % y 9.5 %), y es más robusto que Ridge y ETS en las semanas de rampa.
 # 3. **Lo que no se puede afirmar:** que sea mejor que XGBoost, Random Forest o Ridge en regulares (empate técnico; Ridge gana en 26 de 33 semanas con márgenes pequeños), ni que supere a un baseline limpio en eventos y post-evento (`sma4 + capa` queda 1.1 pts mejor en post-Navidad y `ma28`/`sma4` ganan en eventos). K1 se cumple y K2 no.
 # 4. **Métrica:** WAPE en serie × semana, con sesgo al lado. En estos datos MAE y RMSE darían el mismo ranking, así que la elección se justifica por interpretación (porcentaje de venta mal planeada), comparabilidad entre niveles y falta de escala. MAPE queda descartada porque flatera el subpronóstico (comprobado con modelos sesgados a propósito) y el sesgo solo engaña (ETS en eventos).

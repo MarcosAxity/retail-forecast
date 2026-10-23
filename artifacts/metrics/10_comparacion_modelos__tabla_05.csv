@@ -1,9 +1,0 @@
-modelo,pre_buen_fin_2023,buen_fin_2023,pre_navidad_2023,navidad_2023
-sma4,22.1,31.5,9.2,29.2
-snaive (14 d),24.9,40.2,9.3,36.8
-ma28,21.9,33.4,8.0,25.5
-ETS por serie,20.5,38.0,62.0,32.7
-Ridge,34.3,37.1,42.2,27.6
-Random Forest,25.0,32.6,29.8,29.6
-XGBoost,27.1,32.3,9.3,29.6
-LightGBM (06),29.6,34.5,8.8,28.5

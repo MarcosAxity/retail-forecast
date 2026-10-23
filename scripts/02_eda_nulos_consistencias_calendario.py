@@ -5,14 +5,11 @@ Ejecutar desde la raíz del repo:  uv run python scripts/02_eda_nulos_consistenc
 Entradas : Ninguno (lee data/raw).
 Salidas  : outputs/02_eda_nulos_consistencias_calendario/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 02 · EDA complementario: calidad, atributos de tienda, promoción y ruido
-# Complementa `01_eda.ipynb` con las pruebas que sustentan las decisiones de modelado:
+# # 02 · EDA 2/3: nulos, consistencias, calendario y valores extremos
+# Complementa el script 01 con las pruebas que sustentan las decisiones de modelado (el resto está en el script 03):
 # 1. ¿Los nulos son aleatorios o estructurados?
 # 2. ¿Qué campos son consistentes entre sí? (monto, transacciones, ticket)
 # 3. ¿El calendario es confiable? ¿Los valores extremos son errores o eventos reales?
-# 4. ¿Qué atributos de tienda importan y para qué (nivel vs. dinámica)?
-# 5. ¿La promoción se asignó de forma aleatoria? (pruebas formales)
-# 6. ¿Cuánto error es irreducible y a qué granularidad tiene sentido exigir una meta?
 
 from _common import ROOT, stage, show, display, savefig  # noqa: E402
 import sys

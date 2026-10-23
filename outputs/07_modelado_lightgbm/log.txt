@@ -1,4 +1,4 @@
-[07_modelado_lightgbm] inicio 2026-10-23 00:16:29
+[07_modelado_lightgbm] inicio 2026-10-23 01:03:54
 30 features | 190998 filas elegibles | desarrollo: ['semana_santa_2023', 'may_jun_2023', 'sep_2023'] | confirmación: ['oct_2023', 'feb_2024']
 WAPE % y sesgo % (tienda × categoría × semana, horizonte 14):
 
@@ -59,7 +59,7 @@ sma4      8.15    8.11    -0.93                89,705.20
 snaive    9.23    9.19    -0.98               101,524.13
 ma28      8.21    8.17    -1.05                90,292.38
 
-Por nivel de agregación (folds regulares), contra el piso de ruido del notebook 02:
+Por nivel de agregación (folds regulares), contra el piso de ruido del script 03:
                     WAPE modelo %  WAPE sma4 %  piso de ruido %
 serie × día                 16.90        19.30            15.60
 serie × semana               7.60         8.20             6.50

@@ -1,9 +1,9 @@
-"""Competidores del modelo final (notebook 07). Misma información y mismos folds que LightGBM:
+"""Competidores del modelo final (scripts/10_comparacion_modelos.py). Misma información y mismos folds que LightGBM:
 los modelos de ML usan las mismas 30 features, objetivo log(y) y se reentrenan por fold con fechas
 <= inicio − horizonte. ETS por serie usa solo la historia de la propia serie hasta el origen.
 
 Selección de hiperparámetros: una rejilla pequeña evaluada solo en los folds de desarrollo, igual
-que en el 06; confirmación, eventos y folds extra solo se reportan."""
+que en el paso 07; confirmación, eventos y folds extra solo se reportan."""
 from __future__ import annotations
 
 import warnings
@@ -30,7 +30,7 @@ GRIDS = {"ridge": [{"alpha": a} for a in (1.0, 10.0, 100.0)],
 
 def make_model(name: str, df: pd.DataFrame, cols: list[str], **hp):
     cat = [c for c in cols if str(df[c].dtype) == "category"]
-    if name == "xgb":   # maneja NaN y categorías de forma nativa; hiperparámetros alineados con el LightGBM del 06
+    if name == "xgb":   # maneja NaN y categorías de forma nativa; hiperparámetros alineados con el LightGBM del paso 07
         return xgb.XGBRegressor(n_estimators=400, learning_rate=0.05, max_depth=hp.get("max_depth", 6), min_child_weight=100,
                                 subsample=0.8, colsample_bytree=0.8, tree_method="hist", enable_categorical=True, n_jobs=4, random_state=0)
     if name == "ridge":  # lineal: el día de la semana entra como dummies, no como número

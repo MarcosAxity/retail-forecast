@@ -1,4 +1,4 @@
-[08_backtest_oficial_y_modelo_final] inicio 2026-10-23 00:18:09
+[08_backtest_oficial_y_modelo_final] inicio 2026-10-23 01:05:33
 modelo                         ma28  modelo  sma4  snaive
 tipo        fold                                         
 evento      buen_fin_2023      33.4    34.5  31.5    40.2

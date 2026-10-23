@@ -1,9 +1,0 @@
-,sin capa,con capa,sesgo sin capa,sesgo con capa
-sma4,62.9,11.7,61.7,9.7
-snaive (14 d),37.8,27.1,28.8,-11.2
-ma28,71.7,24.2,71.7,24.1
-ETS por serie,131.8,74.0,131.8,74.0
-Ridge,63.1,17.1,63.0,16.7
-Random Forest,57.1,12.3,56.7,10.5
-XGBoost,57.4,12.0,56.8,10.3
-LightGBM (06),57.9,12.8,57.4,11.3

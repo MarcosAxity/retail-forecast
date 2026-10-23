@@ -7,7 +7,7 @@ El modelo se entrena sobre `amount_total` (MXN). Las unidades se **derivan**:
 con `precio_unitario = Σ monto / Σ unidades` por tienda × categoría, calculado solo con datos
 hasta el corte del pronóstico y solo con filas que tienen unidades observadas (las filas con
 unidades nulas no deben entrar al numerador). `total_transactions` no se pronostica.
-Evidencia: notebook 04_definicion_del_target.
+Evidencia: scripts/05_definicion_target.py.
 """
 from __future__ import annotations
 

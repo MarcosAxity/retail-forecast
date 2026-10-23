@@ -1,5 +1,5 @@
 {
-  "generado": "2026-10-23 00:19:31",
+  "generado": "2026-10-23 01:07:10",
   "archivos": {
     "model/lgbm_h14.joblib": {
       "sha256": "af19abfd9720f229b2b0231eb98cb94ac07431340ec2c832ebed3c34564f51fe",
@@ -38,14 +38,14 @@
       "descripcion": "Resumen del análisis de uplift promocional"
     },
     "metrics/comparacion_regulares.csv": {
-      "sha256": "11d84e9d1617620cfade8430d10cd479629a6a93df68b522a40f9eaa8a4d2409",
-      "bytes": 455,
+      "sha256": "09e068ee79a7f340a0f797ae8c2a5ef3e69b3cb3cccbe30e9dc01681a06f9d13",
+      "bytes": 460,
       "paso": "10",
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_regulares.csv)"
     },
     "metrics/comparacion_eventos.csv": {
-      "sha256": "74a10bed772a9812bb95d205b1414b38f56e274a94e62392b5351bebfcadb662",
-      "bytes": 193,
+      "sha256": "3985298d0f759386cca73bdd47cbaf211626406f4639df2103684c44edf478be",
+      "bytes": 198,
       "paso": "10",
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_eventos.csv)"
     },
@@ -56,7 +56,7 @@
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/significancia_vs_competidores.csv)"
     },
     "environment/versions.txt": {
-      "sha256": "dd64e22662c8ad84457a204ad3f08a8ac6a18c04e12dfb61d4ee4fb460e61058",
+      "sha256": "ea13127515425950467f2aa5fb4c1636da8070286f68261a2adee5344e34a24f",
       "bytes": 272,
       "paso": "12",
       "descripcion": "Versiones usadas (el entorno exacto está bloqueado en uv.lock)"

@@ -1,4 +1,4 @@
-,sma4,snaive (14 d),ma28,ETS por serie,Ridge,Random Forest,XGBoost,LightGBM (06),Spearman con WAPE
+,sma4,snaive (14 d),ma28,ETS por serie,Ridge,Random Forest,XGBoost,LightGBM (paso 07),Spearman con WAPE
 wape,2,5,1,8,7,6,3,4,1.0
 mape,2,6,1,8,7,5,3,4,0.98
 smape,2,5,1,7,8,6,3,4,0.98

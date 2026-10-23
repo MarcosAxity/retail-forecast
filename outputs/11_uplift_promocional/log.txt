@@ -1,4 +1,4 @@
-[11_uplift_promocional] inicio 2026-10-23 00:18:59
+[11_uplift_promocional] inicio 2026-10-23 01:06:21
 203,958 filas observadas | 480 series | 80 tiendas | 2023-01-01 → 2024-02-29 | promoción en 19.98% de las filas
 
 ## 1. Efecto promedio de la promoción sobre amount_total

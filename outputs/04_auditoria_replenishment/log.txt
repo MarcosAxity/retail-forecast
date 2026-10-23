@@ -1,4 +1,4 @@
-[04_auditoria_replenishment] inicio 2026-10-23 00:16:02
+[04_auditoria_replenishment] inicio 2026-10-23 01:03:30
 Filas con señal: 202,998 | nulas: 960 (sin contar las 42 filas ausentes)
 
 [fig_01.png]
@@ -57,7 +57,7 @@ date
 2023-04-28 1,811.000     1,810.990
 2023-04-29 2,357.000     2,356.960
 2023-04-30 4,916.000     4,916.040
-WAPE % a nivel tienda × categoría × día, horizonte 14 días (piso de ruido ≈ 15.6 %, ver notebook 02):
+WAPE % a nivel tienda × categoría × día, horizonte 14 días (piso de ruido ≈ 15.6 %, ver script 03):
 
 [tabla_05.csv]
 fold                                             feb-2024 (regular)  nov-dic 2023 (eventos nuevos)  sep-2023 (regular)  Δ vs base (reg.)

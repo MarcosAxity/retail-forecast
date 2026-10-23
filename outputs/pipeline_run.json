@@ -1,12 +1,12 @@
 {
-  "ultima_corrida": "2026-10-23 00:19:31",
+  "ultima_corrida": "2026-10-23 01:06:53",
   "python": "3.12.15",
   "pasos": [
     {
       "id": "00",
       "script": "scripts/00_preparar_datos.py",
       "estado": "ok",
-      "segundos": 2.1
+      "segundos": 2.3
     },
     {
       "id": "01",
@@ -24,13 +24,13 @@
       "id": "03",
       "script": "scripts/03_eda_tiendas_promocion_ruido.py",
       "estado": "ok",
-      "segundos": 4.4
+      "segundos": 4.1
     },
     {
       "id": "04",
       "script": "scripts/04_auditoria_replenishment.py",
       "estado": "ok",
-      "segundos": 11.6
+      "segundos": 11.2
     },
     {
       "id": "05",
@@ -42,25 +42,25 @@
       "id": "06",
       "script": "scripts/06_features_y_baselines.py",
       "estado": "ok",
-      "segundos": 6.4
+      "segundos": 6.1
     },
     {
       "id": "07",
       "script": "scripts/07_modelado_lightgbm.py",
       "estado": "ok",
-      "segundos": 100.9
+      "segundos": 98.8
     },
     {
       "id": "08",
       "script": "scripts/08_backtest_oficial_y_modelo_final.py",
       "estado": "ok",
-      "segundos": 8.6
+      "segundos": 8.3
     },
     {
       "id": "09",
       "script": "scripts/09_modelado_eventos.py",
       "estado": "ok",
-      "segundos": 25.4
+      "segundos": 25.0
     },
     {
       "id": "10",
@@ -72,7 +72,7 @@
       "id": "11",
       "script": "scripts/11_uplift_promocional.py",
       "estado": "ok",
-      "segundos": 31.8
+      "segundos": 31.7
     },
     {
       "id": "12",

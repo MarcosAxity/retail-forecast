@@ -5,11 +5,8 @@ Ejecutar desde la raíz del repo:  uv run python scripts/03_eda_tiendas_promocio
 Entradas : Ninguno (lee data/raw).
 Salidas  : outputs/03_eda_tiendas_promocion_ruido/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 02 · EDA complementario: calidad, atributos de tienda, promoción y ruido
-# Complementa `01_eda.ipynb` con las pruebas que sustentan las decisiones de modelado:
-# 1. ¿Los nulos son aleatorios o estructurados?
-# 2. ¿Qué campos son consistentes entre sí? (monto, transacciones, ticket)
-# 3. ¿El calendario es confiable? ¿Los valores extremos son errores o eventos reales?
+# # 03 · EDA 3/3: atributos de tienda, asignación de promociones y ruido irreducible
+# Continúa el script 02 (nulos, consistencias y calendario; secciones 1 a 3) con las pruebas que sustentan las decisiones de modelado:
 # 4. ¿Qué atributos de tienda importan y para qué (nivel vs. dinámica)?
 # 5. ¿La promoción se asignó de forma aleatoria? (pruebas formales)
 # 6. ¿Cuánto error es irreducible y a qué granularidad tiene sentido exigir una meta?

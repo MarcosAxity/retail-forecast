@@ -1,4 +1,4 @@
-[06_features_y_baselines] inicio 2026-10-23 00:16:20
+[06_features_y_baselines] inicio 2026-10-23 01:03:47
 horizonte 14 → base_lag 14 | rezagos estacionales [14, 21, 28, 35] | 30 features | 204,000 filas, elegibles 190,998
                             n                                                                                                                          variables
 grupo                                                                                                                                                           
@@ -54,7 +54,7 @@ ma28                                8.200       7.800       8.700   8.200   -1.0
 sma4                                8.200       7.800       8.700   8.100   -0.900
 snaive                              9.200       8.900       9.700   9.200   -1.000
 
-sma4 en folds regulares por nivel de agregación (WAPE %), para comparar con los pisos de ruido del notebook 02 (15.6 / 6.5 / 3.4 / 2.1):
+sma4 en folds regulares por nivel de agregación (WAPE %), para comparar con los pisos de ruido del script 03 (15.6 / 6.5 / 3.4 / 2.1):
 nivel
 serie × día       19.200
 serie × semana     8.200

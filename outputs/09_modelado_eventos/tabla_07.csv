@@ -1,15 +1,15 @@
 fold,tipo,origen,REF,V1 reinicio,V2 multiplicativo,V1+V2,sma4
-semana_santa_2023,regular,oficial (06),3.6,3.6,1.9,1.9,6.5
-abr_may_2023,regular,extra (06b),3.2,3.2,3.0,3.0,3.9
-may_jun_2023,regular,oficial (06),1.4,1.4,1.6,1.6,5.4
-jun_jul_2023,regular,extra (06b),1.4,1.4,1.5,1.5,3.9
-jul_ago_2023,regular,extra (06b),1.3,1.3,1.2,1.2,3.3
-ago_sep_2023,regular,extra (06b),2.7,2.7,2.6,2.6,0.7
-sep_2023,regular,oficial (06),4.5,4.5,5.0,5.0,4.1
-oct_2023,regular,oficial (06),3.9,3.9,3.8,3.8,4.3
-pre_buen_fin_2023,evento,extra (06b),29.6,29.6,29.8,29.8,22.1
-buen_fin_2023,evento,oficial (06),34.2,34.2,33.3,33.3,30.5
-pre_navidad_2023,evento,extra (06b),3.1,3.1,8.0,8.0,6.9
-navidad_2023,evento,oficial (06),27.4,27.4,25.0,25.0,27.9
-post_navidad_2024,post_evento,oficial (06),57.4,13.6,59.2,13.2,61.7
-feb_2024,regular,oficial (06),1.4,1.2,1.4,1.2,3.9
+semana_santa_2023,regular,oficial (paso 07),3.6,3.6,1.9,1.9,6.5
+abr_may_2023,regular,extra (paso 09),3.2,3.2,3.0,3.0,3.9
+may_jun_2023,regular,oficial (paso 07),1.4,1.4,1.6,1.6,5.4
+jun_jul_2023,regular,extra (paso 09),1.4,1.4,1.5,1.5,3.9
+jul_ago_2023,regular,extra (paso 09),1.3,1.3,1.2,1.2,3.3
+ago_sep_2023,regular,extra (paso 09),2.7,2.7,2.6,2.6,0.7
+sep_2023,regular,oficial (paso 07),4.5,4.5,5.0,5.0,4.1
+oct_2023,regular,oficial (paso 07),3.9,3.9,3.8,3.8,4.3
+pre_buen_fin_2023,evento,extra (paso 09),29.6,29.6,29.8,29.8,22.1
+buen_fin_2023,evento,oficial (paso 07),34.2,34.2,33.3,33.3,30.5
+pre_navidad_2023,evento,extra (paso 09),3.1,3.1,8.0,8.0,6.9
+navidad_2023,evento,oficial (paso 07),27.4,27.4,25.0,25.0,27.9
+post_navidad_2024,post_evento,oficial (paso 07),57.4,13.6,59.2,13.2,61.7
+feb_2024,regular,oficial (paso 07),1.4,1.2,1.4,1.2,3.9

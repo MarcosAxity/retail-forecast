@@ -1,6 +1,6 @@
 modelo,WAPE %,sesgo %,MAE (MXN),vs sma4 (pts),folds en que gana a sma4,tiempo backtest (s)
 Ridge,7.26,-0.54,81982.33,-0.51,7,2.69
-LightGBM (06),7.31,-0.35,82607.51,-0.46,7,10.07
+LightGBM (paso 07),7.31,-0.35,82607.51,-0.46,7,10.05
 Random Forest,7.32,-0.29,82680.05,-0.45,7,41.97
 XGBoost,7.34,-0.48,82923.63,-0.43,7,8.55
 sma4,7.77,-1.6,87620.51,0.0,0,

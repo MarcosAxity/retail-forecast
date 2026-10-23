@@ -1,24 +1,24 @@
-[09_modelado_eventos] inicio 2026-10-23 00:18:18
+[09_modelado_eventos] inicio 2026-10-23 01:05:41
 30 features | 190998 filas elegibles | datos: 2023-01-01 → 2024-02-29
 Cobertura contigua 2023-03-27 → 2024-02-25 | 48 semanas
 
 [tabla_01.csv]
-                          tipo      inicio         fin  semanas        origen
-fold                                                                         
-semana_santa_2023      regular  2023-03-27  2023-04-23        4  oficial (06)
-abr_may_2023           regular  2023-04-24  2023-05-28        5   extra (06b)
-may_jun_2023           regular  2023-05-29  2023-06-25        4  oficial (06)
-jun_jul_2023           regular  2023-06-26  2023-07-23        4   extra (06b)
-jul_ago_2023           regular  2023-07-24  2023-08-20        4   extra (06b)
-ago_sep_2023           regular  2023-08-21  2023-09-03        2   extra (06b)
-sep_2023               regular  2023-09-04  2023-10-01        4  oficial (06)
-oct_2023               regular  2023-10-02  2023-10-29        4  oficial (06)
-pre_buen_fin_2023       evento  2023-10-30  2023-11-05        1   extra (06b)
-buen_fin_2023           evento  2023-11-06  2023-12-03        4  oficial (06)
-pre_navidad_2023        evento  2023-12-04  2023-12-10        1   extra (06b)
-navidad_2023            evento  2023-12-11  2024-01-07        4  oficial (06)
-post_navidad_2024  post_evento  2024-01-08  2024-02-11        5  oficial (06)
-feb_2024               regular  2024-02-12  2024-02-25        2  oficial (06)
+                          tipo      inicio         fin  semanas             origen
+fold                                                                              
+semana_santa_2023      regular  2023-03-27  2023-04-23        4  oficial (paso 07)
+abr_may_2023           regular  2023-04-24  2023-05-28        5    extra (paso 09)
+may_jun_2023           regular  2023-05-29  2023-06-25        4  oficial (paso 07)
+jun_jul_2023           regular  2023-06-26  2023-07-23        4    extra (paso 09)
+jul_ago_2023           regular  2023-07-24  2023-08-20        4    extra (paso 09)
+ago_sep_2023           regular  2023-08-21  2023-09-03        2    extra (paso 09)
+sep_2023               regular  2023-09-04  2023-10-01        4  oficial (paso 07)
+oct_2023               regular  2023-10-02  2023-10-29        4  oficial (paso 07)
+pre_buen_fin_2023       evento  2023-10-30  2023-11-05        1    extra (paso 09)
+buen_fin_2023           evento  2023-11-06  2023-12-03        4  oficial (paso 07)
+pre_navidad_2023        evento  2023-12-04  2023-12-10        1    extra (paso 09)
+navidad_2023            evento  2023-12-11  2024-01-07        4  oficial (paso 07)
+post_navidad_2024  post_evento  2024-01-08  2024-02-11        5  oficial (paso 07)
+feb_2024               regular  2024-02-12  2024-02-25        2  oficial (paso 07)
 filas oficiales: 104142 | filas que no cuadran: 0 | máx |Δ pronóstico| (MXN): 0.0
 
 [fig_01.png]
@@ -59,63 +59,63 @@ semana
 2024-02-05  1.06 0.78 1.54  3360
 2024-02-12  1.03 0.86 1.25   480
 filas: 161262 | V1 difiere de REF en los folds regulares solo en: ['feb_2024']
-WAPE % serie x semana (la métrica del 06):
+WAPE % serie x semana (la métrica del paso 07):
 
 [tabla_05.csv]
-                          tipo        origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
-fold                                                                                           
-semana_santa_2023      regular  oficial (06)  7.60         7.60               6.90   6.90  8.70
-abr_may_2023           regular   extra (06b)  7.50         7.50               7.20   7.20  7.60
-may_jun_2023           regular  oficial (06)  7.00         7.00               7.00   7.00  8.10
-jun_jul_2023           regular   extra (06b)  7.00         7.00               6.90   6.90  7.60
-jul_ago_2023           regular   extra (06b)  6.70         6.70               6.70   6.70  7.30
-ago_sep_2023           regular   extra (06b)  7.10         7.10               7.00   7.00  6.70
-sep_2023               regular  oficial (06)  8.20         8.20               8.40   8.40  8.10
-oct_2023               regular  oficial (06)  7.80         7.80               7.80   7.80  8.00
-pre_buen_fin_2023       evento   extra (06b) 29.60        29.60              29.80  29.80 22.10
-buen_fin_2023           evento  oficial (06) 34.50        34.50              34.00  34.00 31.50
-pre_navidad_2023        evento   extra (06b)  8.80         8.80              10.00  10.00  9.20
-navidad_2023            evento  oficial (06) 28.50        28.50              27.00  27.00 29.20
-post_navidad_2024  post_evento  oficial (06) 57.90        14.80              59.80  14.50 62.90
-feb_2024               regular  oficial (06)  7.10         7.00               7.00   7.00  7.80
+                          tipo             origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
+fold                                                                                                
+semana_santa_2023      regular  oficial (paso 07)  7.60         7.60               6.90   6.90  8.70
+abr_may_2023           regular    extra (paso 09)  7.50         7.50               7.20   7.20  7.60
+may_jun_2023           regular  oficial (paso 07)  7.00         7.00               7.00   7.00  8.10
+jun_jul_2023           regular    extra (paso 09)  7.00         7.00               6.90   6.90  7.60
+jul_ago_2023           regular    extra (paso 09)  6.70         6.70               6.70   6.70  7.30
+ago_sep_2023           regular    extra (paso 09)  7.10         7.10               7.00   7.00  6.70
+sep_2023               regular  oficial (paso 07)  8.20         8.20               8.40   8.40  8.10
+oct_2023               regular  oficial (paso 07)  7.80         7.80               7.80   7.80  8.00
+pre_buen_fin_2023       evento    extra (paso 09) 29.60        29.60              29.80  29.80 22.10
+buen_fin_2023           evento  oficial (paso 07) 34.50        34.50              34.00  34.00 31.50
+pre_navidad_2023        evento    extra (paso 09)  8.80         8.80              10.00  10.00  9.20
+navidad_2023            evento  oficial (paso 07) 28.50        28.50              27.00  27.00 29.20
+post_navidad_2024  post_evento  oficial (paso 07) 57.90        14.80              59.80  14.50 62.90
+feb_2024               regular  oficial (paso 07)  7.10         7.00               7.00   7.00  7.80
 Sesgo % de cadena (Σ(pronóstico − real) / Σreal; positivo = sobrepronóstico):
 
 [tabla_06.csv]
-                          tipo        origen    REF  V1 reinicio  V2 multiplicativo  V1+V2   sma4
-fold                                                                                             
-semana_santa_2023      regular  oficial (06)  -3.60        -3.60              -1.90  -1.90  -2.40
-abr_may_2023           regular   extra (06b)  -3.20        -3.20              -3.00  -3.00  -3.40
-may_jun_2023           regular  oficial (06)  -1.40        -1.40              -1.60  -1.60  -5.40
-jun_jul_2023           regular   extra (06b)   0.90         0.90               1.10   1.10  -3.00
-jul_ago_2023           regular   extra (06b)  -1.30        -1.30              -1.20  -1.20  -2.60
-ago_sep_2023           regular   extra (06b)   0.20         0.20               0.10   0.10  -0.70
-sep_2023               regular  oficial (06)   3.00         3.00               2.50   2.50   2.80
-oct_2023               regular  oficial (06)   3.90         3.90               1.60   1.60   4.30
-pre_buen_fin_2023       evento   extra (06b) -29.60       -29.60             -29.80 -29.80 -22.10
-buen_fin_2023           evento  oficial (06) -34.20       -34.20             -33.30 -33.30 -28.90
-pre_navidad_2023        evento   extra (06b)   3.10         3.10               8.00   8.00   6.90
-navidad_2023            evento  oficial (06)  -8.60        -8.60              -4.80  -4.80  -3.60
-post_navidad_2024  post_evento  oficial (06)  57.40        13.60              59.20  13.20  61.70
-feb_2024               regular  oficial (06)  -1.40        -1.20              -1.40  -1.20  -3.90
+                          tipo             origen    REF  V1 reinicio  V2 multiplicativo  V1+V2   sma4
+fold                                                                                                  
+semana_santa_2023      regular  oficial (paso 07)  -3.60        -3.60              -1.90  -1.90  -2.40
+abr_may_2023           regular    extra (paso 09)  -3.20        -3.20              -3.00  -3.00  -3.40
+may_jun_2023           regular  oficial (paso 07)  -1.40        -1.40              -1.60  -1.60  -5.40
+jun_jul_2023           regular    extra (paso 09)   0.90         0.90               1.10   1.10  -3.00
+jul_ago_2023           regular    extra (paso 09)  -1.30        -1.30              -1.20  -1.20  -2.60
+ago_sep_2023           regular    extra (paso 09)   0.20         0.20               0.10   0.10  -0.70
+sep_2023               regular  oficial (paso 07)   3.00         3.00               2.50   2.50   2.80
+oct_2023               regular  oficial (paso 07)   3.90         3.90               1.60   1.60   4.30
+pre_buen_fin_2023       evento    extra (paso 09) -29.60       -29.60             -29.80 -29.80 -22.10
+buen_fin_2023           evento  oficial (paso 07) -34.20       -34.20             -33.30 -33.30 -28.90
+pre_navidad_2023        evento    extra (paso 09)   3.10         3.10               8.00   8.00   6.90
+navidad_2023            evento  oficial (paso 07)  -8.60        -8.60              -4.80  -4.80  -3.60
+post_navidad_2024  post_evento  oficial (paso 07)  57.40        13.60              59.20  13.20  61.70
+feb_2024               regular  oficial (paso 07)  -1.40        -1.20              -1.40  -1.20  -3.90
 WAPE % total de cadena x semana (error de nivel, sin el reparto entre series):
 
 [tabla_07.csv]
-                          tipo        origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
-fold                                                                                           
-semana_santa_2023      regular  oficial (06)  3.60         3.60               1.90   1.90  6.50
-abr_may_2023           regular   extra (06b)  3.20         3.20               3.00   3.00  3.90
-may_jun_2023           regular  oficial (06)  1.40         1.40               1.60   1.60  5.40
-jun_jul_2023           regular   extra (06b)  1.40         1.40               1.50   1.50  3.90
-jul_ago_2023           regular   extra (06b)  1.30         1.30               1.20   1.20  3.30
-ago_sep_2023           regular   extra (06b)  2.70         2.70               2.60   2.60  0.70
-sep_2023               regular  oficial (06)  4.50         4.50               5.00   5.00  4.10
-oct_2023               regular  oficial (06)  3.90         3.90               3.80   3.80  4.30
-pre_buen_fin_2023       evento   extra (06b) 29.60        29.60              29.80  29.80 22.10
-buen_fin_2023           evento  oficial (06) 34.20        34.20              33.30  33.30 30.50
-pre_navidad_2023        evento   extra (06b)  3.10         3.10               8.00   8.00  6.90
-navidad_2023            evento  oficial (06) 27.40        27.40              25.00  25.00 27.90
-post_navidad_2024  post_evento  oficial (06) 57.40        13.60              59.20  13.20 61.70
-feb_2024               regular  oficial (06)  1.40         1.20               1.40   1.20  3.90
+                          tipo             origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
+fold                                                                                                
+semana_santa_2023      regular  oficial (paso 07)  3.60         3.60               1.90   1.90  6.50
+abr_may_2023           regular    extra (paso 09)  3.20         3.20               3.00   3.00  3.90
+may_jun_2023           regular  oficial (paso 07)  1.40         1.40               1.60   1.60  5.40
+jun_jul_2023           regular    extra (paso 09)  1.40         1.40               1.50   1.50  3.90
+jul_ago_2023           regular    extra (paso 09)  1.30         1.30               1.20   1.20  3.30
+ago_sep_2023           regular    extra (paso 09)  2.70         2.70               2.60   2.60  0.70
+sep_2023               regular  oficial (paso 07)  4.50         4.50               5.00   5.00  4.10
+oct_2023               regular  oficial (paso 07)  3.90         3.90               3.80   3.80  4.30
+pre_buen_fin_2023       evento    extra (paso 09) 29.60        29.60              29.80  29.80 22.10
+buen_fin_2023           evento  oficial (paso 07) 34.20        34.20              33.30  33.30 30.50
+pre_navidad_2023        evento    extra (paso 09)  3.10         3.10               8.00   8.00  6.90
+navidad_2023            evento  oficial (paso 07) 27.40        27.40              25.00  25.00 27.90
+post_navidad_2024  post_evento  oficial (paso 07) 57.40        13.60              59.20  13.20 61.70
+feb_2024               regular  oficial (paso 07)  1.40         1.20               1.40   1.20  3.90
 REF: WAPE medio regulares 7.31 % | sesgo post_navidad 57.4 %
 
 [tabla_08.csv]
@@ -124,7 +124,7 @@ variante
 V1 reinicio                            -0.00                      13.61                      0.00                     0.00   True   True   True          True
 V2 multiplicativo                      -0.10                      59.15                     -0.52                    -1.51   True  False   True         False
 V1+V2                                  -0.10                      13.18                     -0.52                    -1.51   True   True   True          True
-Regla del 06 para adoptar un cambio: mejora >= 0.2 pts en desarrollo (diferencia negativa = mejor).
+Regla del paso 07 para adoptar un cambio: mejora >= 0.2 pts en desarrollo (diferencia negativa = mejor).
 
 [tabla_09.csv]
                    desarrollo (pts vs REF)  confirmación (pts vs REF)  extra regulares (pts vs REF)
@@ -199,13 +199,13 @@ semana
 WAPE % serie x semana por fold:
 
 [tabla_15.csv]
-                          tipo        origen   REF  V1 reinicio  V1b (31-dic)
-fold                                                                         
-pre_buen_fin_2023       evento   extra (06b) 29.60        29.60         29.60
-buen_fin_2023           evento  oficial (06) 34.50        34.50         34.50
-pre_navidad_2023        evento   extra (06b)  8.80         8.80          8.80
-navidad_2023            evento  oficial (06) 28.50        28.50         20.70
-post_navidad_2024  post_evento  oficial (06) 57.90        14.80         12.80
-feb_2024               regular  oficial (06)  7.10         7.00          7.00
+                          tipo             origen   REF  V1 reinicio  V1b (31-dic)
+fold                                                                              
+pre_buen_fin_2023       evento    extra (paso 09) 29.60        29.60         29.60
+buen_fin_2023           evento  oficial (paso 07) 34.50        34.50         34.50
+pre_navidad_2023        evento    extra (paso 09)  8.80         8.80          8.80
+navidad_2023            evento  oficial (paso 07) 28.50        28.50         20.70
+post_navidad_2024  post_evento  oficial (paso 07) 57.90        14.80         12.80
+feb_2024               regular  oficial (paso 07)  7.10         7.00          7.00
 Δ WAPE regulares vs REF (pts): V1 -0.00 | V1b -0.00
 Sesgo post_navidad (%): V1 13.6 | V1b 11.3

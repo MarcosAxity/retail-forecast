@@ -5,10 +5,10 @@ Ejecutar desde la raíz del repo:  uv run python scripts/04_auditoria_replenishm
 Entradas : Ninguno (lee data/raw).
 Salidas  : outputs/04_auditoria_replenishment/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 03 · Auditoría de `replenishment_signal`
+# # 04 · Auditoría de `replenishment_signal`
 # El diccionario dice que la señal la calcula el sistema de reposición «con base en la demanda observada». Si en realidad incorpora la demanda del día que queremos pronosticar (o de días posteriores), usarla sería **fuga de información**: las métricas de validación saldrían muy buenas y en producción el modelo no tendría ese dato.
 #
-# Complementa la sección 7 de `01_eda.ipynb` con cuatro pruebas:
+# Complementa la sección 7 del script 01 con cuatro pruebas:
 # 1. **Correlación cruzada:** ¿con qué día de demanda se parece la señal?
 # 2. **Reconstrucción exacta:** ¿es una función de otras columnas? ¿cuál ventana?
 # 3. **Fuga indirecta:** ¿un rezago pequeño basta para evitar la fuga?
@@ -147,18 +147,18 @@ for fold, (a, b) in FOLDS.items():
         rows.append({'fold': fold, 'variante': name, 'WAPE %': wape(te.amount_total, yh) * 100, 'sesgo %': bias(te.amount_total, yh) * 100})
 R = pd.DataFrame(rows); W = R.pivot(index='variante', columns='fold', values='WAPE %').loc[list(VARIANTS)]
 W['Δ vs base (reg.)'] = W[['sep-2023 (regular)', 'feb-2024 (regular)']].mean(axis=1) - W.loc['base (sin señal)', ['sep-2023 (regular)', 'feb-2024 (regular)']].mean()
-print('WAPE % a nivel tienda × categoría × día, horizonte 14 días (piso de ruido ≈ 15.6 %, ver notebook 02):'); show(W)
+print('WAPE % a nivel tienda × categoría × día, horizonte 14 días (piso de ruido ≈ 15.6 %, ver script 03):'); show(W)
 
 # **Lectura** (WAPE a nivel serie-día; promedio de los dos folds regulares):
 # - **Señal en *t*:** mejora el WAPE entre 0.3 y 1.0 puntos (fuga real pero pequeña, porque la señal suaviza 7 días y el día *t* pesa 1/7).
-# - **Reconstrucción con rezagos 1–2 y 8–9:** el WAPE baja ≈ **4.2 puntos** en los folds regulares (a 14.1 % y 13.4 %) y **7.8 puntos** en nov–dic (de 32.3 % a 24.5 %). Esos valores están **por debajo del piso de ruido (≈ 15.6 %, notebook 02)**: ningún modelo legítimo puede lograrlos. Es el síntoma de fuga, y se detecta sin conocer su causa.
+# - **Reconstrucción con rezagos 1–2 y 8–9:** el WAPE baja ≈ **4.2 puntos** en los folds regulares (a 14.1 % y 13.4 %) y **7.8 puntos** en nov–dic (de 32.3 % a 24.5 %). Esos valores están **por debajo del piso de ruido (≈ 15.6 %, script 03)**: ningún modelo legítimo puede lograrlos. Es el síntoma de fuga, y se detecta sin conocer su causa.
 # - **Rezago 14:** ganancia 0.0. Su ventana llega hasta *t−13* (un día más allá del origen), pero ese día está lejos del objetivo y no ayuda; sigue siendo inválido.
 # - **Rezagos 15 y 28 (válidos):** ganancia de **0.0 puntos** en los tres folds. Usada correctamente, la señal no aporta nada que no den los rezagos y medias móviles de la propia serie.
 #
 # **Lección de método:** un rezago «razonable» no garantiza ausencia de fuga, y un WAPE por debajo del piso de ruido debe tratarse como alarma y no como éxito.
 
 # ## 5. La señal hereda el defecto de `total_transactions`
-# Como se construye con `total_transactions` (inflado en días con promoción, ver notebook 02), la señal debería quedar inflada en proporción a los días con promoción dentro de su ventana.
+# Como se construye con `total_transactions` (inflado en días con promoción, ver script 02), la señal debería quedar inflada en proporción a los días con promoción dentro de su ventana.
 
 PROMO = wide('has_promotion'); PAID_W = window_mean(cands['efectivo+tarjeta'], 5, 1); FR = window_mean(PROMO, 5, 1)
 z = pd.DataFrame({'sig': SIG.stack(), 'paid_w': PAID_W.stack(), 'frac': FR.stack()}).dropna()

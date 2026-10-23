@@ -5,7 +5,7 @@ Ejecutar desde la raíz del repo:  uv run python scripts/06_features_y_baselines
 Entradas : Ninguno (lee data/raw).
 Salidas  : outputs/06_features_y_baselines/  (log.txt, tabla_XX.csv, fig_XX.png)
 """
-# # 05 · Features y baselines
+# # 06 · Features y baselines
 # 1. Catálogo de features y decisiones de diseño.
 # 2. Regla anti-fuga y su verificación empírica (incluyendo una fuga deliberada para comprobar que la prueba la detecta).
 # 3. Baselines con la misma información que el modelo y esquema de validación walk-forward.
@@ -43,7 +43,7 @@ nan = (F[cols].isna().mean() * 100).round(2); print('\n% de NaN (solo variables 
 # - **Escala:** los features de historia del target están en logaritmos (la escala del modelo); las columnas `base_*` (baselines) están en niveles (MXN).
 # - **Rezagos por fecha** sobre el panel completo, no por posición de fila. Ventanas con `min_periods` explícito (50 %) y sin rellenar faltantes: una fila ausente deja el rezago correspondiente en NaN.
 # - **Sin `month`, `quarter`, `week_of_year` ni `store_id`.** Con 14 meses cada valor anual se observa una sola vez y el modelo lo usaría como índice de tiempo. El nivel de cada serie entra por sus rezagos, lo que evita memorizar tiendas. Se verificará por ablación en la Fase 3.
-# - **Variables de tienda:** solo `store_format` y `socioeconomic_level` (ordinal C < C+ < B < A/B); región, farmacia, gasolinera y tamaño no aportan una vez conocido el formato (notebook 02). `FeatureConfig.store_features` permite añadirlas para la ablación.
+# - **Variables de tienda:** solo `store_format` y `socioeconomic_level` (ordinal C < C+ < B < A/B); región, farmacia, gasolinera y tamaño no aportan una vez conocido el formato (script 03). `FeatureConfig.store_features` permite añadirlas para la ablación.
 # - **Quincena por regla** (día 15 y último del mes), con distancias en ambos sentidos. `is_official_holiday` separa los festivos del Buen Fin, que `is_holiday` mezcla.
 # - **Navidad:** `days_to_christmas` con signo (−14 a 60) distingue la rampa de nov–dic de la caída posterior de enero, que `is_navidad_season` (15-dic a 6-ene) no separa.
 # - **Buen Fin:** `buen_fin_day`, `days_to_buen_fin` y `days_since_buen_fin`, repitiendo el evento ±364 días (mismo día de la semana) para no tener NaN fuera del año observado. Describen *cuándo* ocurre, no su magnitud: con una sola ocurrencia el modelo no puede aprenderla.
@@ -93,7 +93,7 @@ print('\nWAPE % (tienda × categoría × semana) y sesgo %, horizonte 14:'); sho
 reg = sw[sw.tipo == 'regular'].groupby('modelo').apply(lambda g: pd.Series({'WAPE % (media de folds regulares)': g.wape.mean() * 100, 'WAPE % mín': g.wape.min() * 100, 'WAPE % máx': g.wape.max() * 100, 'MAPE %': g.mape.mean() * 100, 'sesgo %': g.bias.mean() * 100}))
 print('Folds regulares:'); print(reg.round(1).to_string())
 niv = B[(B.tipo == 'regular') & (B.modelo == 'sma4')].groupby('nivel').wape.mean().mul(100).round(1).reindex(['serie × día', 'serie × semana', 'tienda × semana', 'total × semana'])
-print('\nsma4 en folds regulares por nivel de agregación (WAPE %), para comparar con los pisos de ruido del notebook 02 (15.6 / 6.5 / 3.4 / 2.1):'); print(niv.to_string())
+print('\nsma4 en folds regulares por nivel de agregación (WAPE %), para comparar con los pisos de ruido del script 03 (15.6 / 6.5 / 3.4 / 2.1):'); print(niv.to_string())
 
 test_reg = pd.concat([F[f.test_mask(F.date) & F.eligible] for f in FOLDS if f.kind == 'regular'])
 seg = {by: evaluate_by(test_reg, 'base_sma4', by)[['wape', 'bias']].mul(100).round(1) for by in ['category', 'store_format', 'region']}
@@ -101,7 +101,7 @@ print('sma4 en folds regulares, WAPE % y sesgo % por segmento (tienda × categor
 
 # **Lectura.**
 # - **Periodos regulares:** `sma4` y `ma28` quedan en **8.2 % de WAPE semanal** (rango por fold 7.8 %–8.7 %), `snaive` en 9.2 %. El sesgo medio es pequeño (≈ −1 %) pero cambia de signo entre folds (+2.8 % y +4.3 % en sep–oct, −5.4 % en may–jun): el nivel común de la cadena deriva durante el año y los baselines van un paso atrás. El baseline ya cumple una meta de 10 %: **el listón del modelo es `sma4`, no el 10 %**.
-# - **Margen real:** el piso de ruido a este nivel es ≈ 6.5 % (notebook 02), así que el modelo solo puede mejorar ≈ 1.7 puntos en periodos regulares. A nivel serie-día `sma4` tiene 19.2 % frente a un piso de 15.6 %.
+# - **Margen real:** el piso de ruido a este nivel es ≈ 6.5 % (script 03), así que el modelo solo puede mejorar ≈ 1.7 puntos en periodos regulares. A nivel serie-día `sma4` tiene 19.2 % frente a un piso de 15.6 %.
 # - **Sin segmentos problemáticos:** el WAPE de `sma4` es 8.0 %–8.4 % en todas las categorías, formatos y regiones.
 # - **Eventos:** todos los baselines fallan (WAPE 25 %–40 %). En Buen Fin sub-pronostican (sesgo −29 % a −33 %) porque el evento nunca se había visto.
 # - **Post-evento (enero–febrero tras Navidad):** `sma4` llega a 62.9 % con **sesgo +61.7 %** y `ma28` a 71.7 %, porque sus rezagos de 14–35 días caen sobre el pico de diciembre y proyectan demanda que ya no existe (riesgo de exceso de inventario). `snaive`, que usa un solo día de referencia, llega a 37.8 %. Es la debilidad más grande de los baselines y la razón de reportar este tipo de fold aparte.

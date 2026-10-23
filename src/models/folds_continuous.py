@@ -1,5 +1,5 @@
 """Backtest continuo: los 8 folds oficiales de `backtest.FOLDS` más 6 folds extra que cubren los
-huecos (abr–may, jun–sep y las semanas pegadas a Buen Fin y Navidad). Ver notebook 06b, sección 1.
+huecos (abr–may, jun–sep y las semanas pegadas a Buen Fin y Navidad). Ver scripts/09_modelado_eventos.py, sección 1.
 Cobertura contigua del 2023-03-27 al 2024-02-25 (48 semanas). Los folds oficiales no cambian."""
 from __future__ import annotations
 
