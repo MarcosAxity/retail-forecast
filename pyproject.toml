@@ -20,6 +20,9 @@ dependencies = [
     "xgboost>=3.4.1",
 ]
 
+[project.optional-dependencies]
+chat = ["anthropic>=0.40"]
+
 [dependency-groups]
 dev = ["jupyter>=1.0", "nbconvert>=7", "matplotlib>=3.8", "pytest>=8", "ruff>=0.4"]
 

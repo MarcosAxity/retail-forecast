@@ -1,5 +1,5 @@
-python==3.12.15
-plataforma=Linux-6.8.0-138-generic-aarch64-with-glibc2.35
+python==3.12.13
+plataforma=macOS-27.0.1-arm64-arm-64bit
 pandas==3.1.0
 numpy==2.5.4
 scikit-learn==1.9.1
@@ -11,4 +11,4 @@ shap==0.54.1
 pyarrow==26.0.0
 joblib==1.6.0
 matplotlib==3.11.2
-git_commit_base=4b03c84
+git_commit_base=731a262

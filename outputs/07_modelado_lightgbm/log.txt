@@ -1,4 +1,4 @@
-[07_modelado_lightgbm] inicio 2026-10-23 01:03:54
+[07_modelado_lightgbm] inicio 2026-10-23 12:07:06
 30 features | 190998 filas elegibles | desarrollo: ['semana_santa_2023', 'may_jun_2023', 'sep_2023'] | confirmación: ['oct_2023', 'feb_2024']
 WAPE % y sesgo % (tienda × categoría × semana, horizonte 14):
 

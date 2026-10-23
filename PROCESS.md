@@ -13,6 +13,7 @@ Se trabajó como un proyecto de ciencia de datos con fases cerradas por decisió
 | 2 · Target, features y baselines | ¿Qué se pronostica, con qué y contra qué? | Target `amount_total`; `replenishment_signal` excluida por fuga; features anti-fuga con pruebas; baselines y folds walk-forward |
 | 3 · Modelado y competencia | ¿Qué modelo y cómo se justifica? | LightGBM + capa de régimen; competencia de 8 modelos con significancia; argumentación de la métrica |
 | 4 · Uplift promocional | ¿Las promociones venden más? | Sin venta incremental medible (−0.25 %, acotada a ±0.5 %) |
+| 5 · Dashboard | ¿Cómo se revisa el trabajo sin leer código? | Tablero Streamlit de 4 pestañas (modelo, simulador de demanda, uplift, chat sobre el histórico) que solo lee `artifacts/`, `outputs/` y `data/raw/` |
 | Cierre | ¿Se puede reproducir y auditar? | Pipeline de punta a punta (`run_pipeline.py`), scripts en lugar de notebooks y carpeta `artifacts/` |
 
 Reglas que se fijaron **antes** de mirar resultados: folds de desarrollo, de confirmación y de evento; umbral de adopción de un cambio (≥ 0.2 pt de WAPE en desarrollo);
@@ -22,7 +23,7 @@ criterios K1/K2 de la propuesta final. Los resultados que no cumplen un criterio
 
 - **Claude (Anthropic)**, en conversaciones de un proyecto de claude.ai y en una sesión de agente con acceso al repositorio. Se usó como asistente para:
   planear fases, redactar y refactorizar código, proponer pruebas estadísticas, revisar resultados, migrar los notebooks a scripts y redactar documentación.
-- **Python 3.12 · `uv`** (entorno bloqueado en `uv.lock`), pandas, NumPy, SciPy, statsmodels, scikit-learn, LightGBM, XGBoost, SHAP, matplotlib, pytest, ruff.
+- **Python 3.12 · `uv`** (entorno bloqueado en `uv.lock`), pandas, NumPy, SciPy, statsmodels, scikit-learn, LightGBM, XGBoost, SHAP, matplotlib, pytest, ruff; **Streamlit y Plotly** para el dashboard y, solo de forma opcional, el SDK de Anthropic para el chat con Claude.
 - **Git** para el historial de fases.
 
 ## Qué decidió y verificó la persona, y qué aportó la AI
@@ -40,6 +41,14 @@ criterios K1/K2 de la propuesta final. Los resultados que no cumplen un criterio
 - En el primer borrador del análisis de uplift, las conclusiones estaban escritas a mano y afirmaban «no se distingue de cero»; al ejecutar con efectos fijos el efecto resultó ligeramente negativo (−0.25 %) con IC95 que excluye el cero.
   Las conclusiones ahora se generan a partir de los resultados y se reportan la sensibilidad a la especificación (en niveles p = 0.24) y la cota más amplia.
 
+## Decisiones de la Fase 5 (dashboard)
+
+- **Categoría y tienda en lugar de SKU:** los datos no traen SKU. Las unidades se estiman como monto ÷ precio unitario reciente y así se rotulan.
+- **El tablero no reentrena:** lee el modelo y la evidencia versionados; el pronóstico de los 14 días siguientes al último dato (1–14 de marzo de 2024) es un paso más del pipeline (13) con pruebas de equivalencia de variables contra el pronóstico histórico.
+- **Chat que funciona sin API:** quien evalúe descarga el código y lo ejecuta, así que el chat tiene dos modos con las **mismas herramientas** (`--chat`): guiado (reglas, sin LLM) y Claude (lenguaje libre con tool use). En ambos las cifras salen de pandas, nunca del modelo de lenguaje; el modo Claude se probó con un cliente simulado.
+- **Pruebas:** arranque de la app con `streamlit.testing`, tablas y selecciones del simulador, resolución de modos del chat, herramientas del chat contra cálculos independientes en pandas y el orquestador con errores de herramienta, límite de iteraciones y fallos de red.
+- **Errores corregidos en el camino:** una regla de estilos que sustituía la fuente de los iconos de Streamlit, solapamientos en gráficas, advertencias de deprecación de pandas 3 y días de quincena o vecinos a un evento marcados como «anomalías» por el chat.
+
 ## Cómo reproducir
 
-Ver `README.md` (sección «Cómo reproducirlo»). Orden de ejecución y entradas/salidas de cada paso: `uv run python run_pipeline.py --list`.
+Ver `README.md` (sección 2 para el dashboard y «Cómo reproducirlo» para el pipeline). Orden de ejecución y entradas/salidas de cada paso: `uv run python run_pipeline.py --list`.

@@ -1,0 +1,70 @@
+[13_pronostico_proximos_14_dias] inicio 2026-10-23 12:14:29
+Último dato: 2024-02-29 | modelo entrenado hasta 2024-02-29 | horizonte 14 días
+6,720 filas (480 series × 14 días) → outputs/13_pronostico_proximos_14_dias/pronostico_14d.csv
+Capa de régimen: factor = 1.0 en todas las filas (True); el horizonte no toca Buen Fin ni Navidad.
+
+Venta diaria media de la cadena: últimos 14 días observados 71,420,192 MXN | pronóstico 71,553,489 MXN (razón 1.002)
+
+Total de la cadena por día:
+
+[tabla_01.csv]
+                  día     monto MXN  unidades
+date                                         
+2024-03-01     Friday  78,323,535.4 538,036.9
+2024-03-02   Saturday  98,218,892.6 675,210.0
+2024-03-03     Sunday  88,773,241.0 608,950.5
+2024-03-04     Monday  52,707,661.0 362,261.9
+2024-03-05    Tuesday  57,394,011.8 394,767.5
+2024-03-06  Wednesday  59,294,430.8 407,489.3
+2024-03-07   Thursday  64,006,155.2 439,840.0
+2024-03-08     Friday  79,066,126.0 543,543.0
+2024-03-09   Saturday 100,350,612.9 689,199.1
+2024-03-10     Sunday  90,001,785.3 618,980.6
+2024-03-11     Monday  53,506,164.2 367,301.0
+2024-03-12    Tuesday  57,266,174.7 393,607.1
+2024-03-13  Wednesday  58,139,522.8 399,924.6
+2024-03-14   Thursday  64,700,535.6 445,140.5
+
+Por categoría:
+
+[tabla_02.csv]
+                     monto MXN    unidades  tiendas  % del monto
+category                                                        
+Abarrotes        249,557,055.9 2,209,732.3       80         24.9
+Electronica      182,467,275.4   367,801.1       80         18.2
+Hogar            169,602,574.1   864,623.7       80         16.9
+Ropa             165,664,409.3   617,520.0       80         16.5
+Bebidas          128,540,131.7 1,724,003.6       80         12.8
+Cuidado_Personal 105,917,402.9 1,100,571.5       80         10.6
+
+Por formato de tienda:
+
+[tabla_03.csv]
+                 monto MXN    unidades  tiendas  % del monto
+store_format                                                
+Bodega       438,999,887.7 3,061,861.8       35         43.8
+Supercenter  412,703,879.2 2,788,586.9       20         41.2
+Express      150,045,082.5 1,033,803.5       25         15.0
+
+Por nivel socioeconómico:
+
+[tabla_04.csv]
+        monto MXN    unidades  tiendas  % del monto
+nse                                                
+C+  329,182,733.2 2,330,391.4       27         32.9
+B   306,779,681.2 1,807,469.0       21         30.6
+C   275,407,940.8 2,305,720.5       27         27.5
+A/B  90,378,494.2   440,671.3        5          9.0
+
+Por región:
+
+[tabla_05.csv]
+              monto MXN    unidades  tiendas  % del monto
+region                                                   
+Occidente 256,369,313.4 1,750,677.5       20         25.6
+Norte     214,722,029.7 1,510,692.6       17         21.4
+Oriente   204,406,440.5 1,443,052.7       18         20.4
+Sur       174,485,998.4 1,109,623.7       13         17.4
+Centro    151,765,067.4 1,070,205.7       12         15.2
+
+[fig_01.png] Venta diaria de la cadena

@@ -1,9 +1,9 @@
 {
-  "generado": "2026-10-23 01:07:10",
+  "generado": "2026-10-23 12:14:28",
   "archivos": {
     "model/lgbm_h14.joblib": {
-      "sha256": "af19abfd9720f229b2b0231eb98cb94ac07431340ec2c832ebed3c34564f51fe",
-      "bytes": 1245818,
+      "sha256": "fea6300f1261f350d3ed7a44d6fb4c328ead49232c35ce9a7062e98e58a1d16f",
+      "bytes": 1245777,
       "paso": "08",
       "descripcion": "Modelo final LightGBM + metadatos (columnas, parámetros, fecha de corte de entrenamiento)"
     },
@@ -14,14 +14,14 @@
       "descripcion": "Especificación completa del modelo y de la capa de régimen"
     },
     "model/feature_importance.csv": {
-      "sha256": "794ff4d8fcaa2d19f613d9089086a44c298eda5f6ec0d7cf652f2dd49619465c",
-      "bytes": 1695,
+      "sha256": "b1cf37089c54905607a2d652d518969dd8730e840f4996b1bd3ded34ac0e1b0c",
+      "bytes": 1698,
       "paso": "12",
       "descripcion": "Importancia por ganancia (complementa SHAP del paso 07)"
     },
     "metrics/backtest_metrics_h14.csv": {
-      "sha256": "ca1da42c9635ad2b0ba9d202d95a98dda8592b0eac30aaa7eb91b0e1f93eb197",
-      "bytes": 3556,
+      "sha256": "2ded0412e2e6310130dc961483812c524f4376e75ade0617187f816a02e974bc",
+      "bytes": 3557,
       "paso": "08",
       "descripcion": "WAPE/MAPE/sesgo por fold y modelo (backtest oficial)"
     },
@@ -32,19 +32,19 @@
       "descripcion": "Baselines por fold y nivel de agregación"
     },
     "metrics/uplift_resumen.json": {
-      "sha256": "e3dad0042586d3475acadfc61ae78133c0b10747472d7bb4c62d5c7a4bf103eb",
+      "sha256": "13eeb51f2baceccb4d75d61ad34ecaa01c62b6f51ed26f0ff0979d74983abfb3",
       "bytes": 711,
       "paso": "11",
       "descripcion": "Resumen del análisis de uplift promocional"
     },
     "metrics/comparacion_regulares.csv": {
-      "sha256": "09e068ee79a7f340a0f797ae8c2a5ef3e69b3cb3cccbe30e9dc01681a06f9d13",
+      "sha256": "97d4b56930cb39b7b38bf0a8b2de85fb7d86c1ffdc8c9b5a3321024928985513",
       "bytes": 460,
       "paso": "10",
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_regulares.csv)"
     },
     "metrics/comparacion_eventos.csv": {
-      "sha256": "3985298d0f759386cca73bdd47cbaf211626406f4639df2103684c44edf478be",
+      "sha256": "a08d1ac103ff19bce46053ca9f33f2deaf3ba587bbaf9c0db7665603de2a1022",
       "bytes": 198,
       "paso": "10",
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_eventos.csv)"
@@ -56,8 +56,8 @@
       "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/significancia_vs_competidores.csv)"
     },
     "environment/versions.txt": {
-      "sha256": "ea13127515425950467f2aa5fb4c1636da8070286f68261a2adee5344e34a24f",
-      "bytes": 272,
+      "sha256": "038311d0a01f35403cf59e2d1c29ca71b001c92d1decc6d3ab01f82e3ebdb4d3",
+      "bytes": 254,
       "paso": "12",
       "descripcion": "Versiones usadas (el entorno exacto está bloqueado en uv.lock)"
     },

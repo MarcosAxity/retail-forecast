@@ -1,4 +1,4 @@
-[03_eda_tiendas_promocion_ruido] inicio 2026-10-23 01:03:25
+[03_eda_tiendas_promocion_ruido] inicio 2026-10-23 12:06:13
 (203958, 40)
 R² del formato solo: 0.783 | con todos los atributos: 0.893
 

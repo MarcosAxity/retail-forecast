@@ -1,4 +1,4 @@
-[02_eda_nulos_consistencias_calendario] inicio 2026-10-23 01:03:24
+[02_eda_nulos_consistencias_calendario] inicio 2026-10-23 12:06:11
 (203958, 40)
 ¿cash_transactions y amount_cash son nulos siempre juntos?
 amount_cash nulo   False  True 

@@ -1,4 +1,4 @@
-[04_auditoria_replenishment] inicio 2026-10-23 01:03:30
+[04_auditoria_replenishment] inicio 2026-10-23 12:06:17
 Filas con señal: 202,998 | nulas: 960 (sin contar las 42 filas ausentes)
 
 [fig_01.png]

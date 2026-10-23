@@ -1,4 +1,4 @@
-[10_comparacion_modelos] inicio 2026-10-23 01:06:09
+[10_comparacion_modelos] inicio 2026-10-23 12:13:17
 30 features | 14 folds continuos | 2023-03-27 → 2024-02-25
 Hiperparámetros elegidos en desarrollo: {'ridge': {'alpha': 1.0}, 'xgb': {'max_depth': 4}, 'rf': {'min_samples_leaf': 10}}
 
@@ -14,7 +14,7 @@ rf    0    NaN               7.65        NaN             10.00
       1    NaN               7.96        NaN             50.00
 filas de prueba: 161262 | NaN por columna: {}
 LightGBM reproduce el backtest oficial del paso 07: máx |Δ| = 0.0 MXN
-Tiempo de backtest por modelo (s): {'lgbm': 10, 'ridge': 3, 'xgb': 9, 'rf': 42, 'ets': 72}
+Tiempo de backtest por modelo (s): {'lgbm': 29, 'ridge': 3, 'xgb': 9, 'rf': 42, 'ets': 72}
 filas descartadas por semana incompleta o NaN: 66 de 161262
 9 folds regulares | 4 folds de evento | post-evento: post_navidad_2024
 
@@ -22,7 +22,7 @@ filas descartadas por semana incompleta o NaN: 66 de 161262
                     WAPE %  sesgo %  MAE (MXN)  vs sma4 (pts)  folds en que gana a sma4  tiempo backtest (s)
 modelo                                                                                                      
 Ridge                 7.26    -0.54  81,982.33          -0.51                         7                 2.69
-LightGBM (paso 07)    7.31    -0.35  82,607.51          -0.46                         7                10.05
+LightGBM (paso 07)    7.31    -0.35  82,607.51          -0.46                         7                29.14
 Random Forest         7.32    -0.29  82,680.05          -0.45                         7                41.97
 XGBoost               7.34    -0.48  82,923.63          -0.43                         7                 8.55
 sma4                  7.77    -1.60  87,620.51           0.00                         0                  NaN
@@ -112,7 +112,7 @@ ETS por serie      38.32 36.46  34.45 674,589.66 1,021,968.36  -2.83      58.89 
 Ridge              35.30 35.64  36.36 611,932.63   842,041.95  -8.36      57.13     8.36
 Random Forest      29.23 29.91  30.05 513,000.45   719,868.51  -8.80      48.24     8.80
 XGBoost            24.60 24.71  25.90 432,777.16   654,308.77 -15.33      44.57    15.33
-LightGBM (paso 07) 25.36 25.10  27.19 444,430.88   664,315.80 -17.34      46.70    17.34
+LightGBM (paso 07) 25.35 25.09  27.18 444,389.60   664,297.75 -17.34      46.70    17.34
 Rango por métrica (eventos; 1 = mejor) y correlación de Spearman con el rango por WAPE:
 
 [tabla_10.csv]
@@ -160,6 +160,6 @@ Criterios secundarios (K4) entre la propuesta y sus empates técnicos:
 Ridge                             7.25                                        0.75                    2.69
 Random Forest                     7.31                                        0.47                   41.97
 XGBoost                           7.34                                        0.52                    8.55
-LightGBM (paso 07)                7.31                                        0.49                   10.05
+LightGBM (paso 07)                7.31                                        0.49                   29.14
 
 [fig_02.png]

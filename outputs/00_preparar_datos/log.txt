@@ -1,10 +1,10 @@
-[00_preparar_datos] inicio 2026-10-23 01:03:21
+[00_preparar_datos] inicio 2026-10-23 12:06:08
 
 === python -m src.data.preprocess 
 Panel: (204000, 39), filas ausentes: 42
 
 === python -m src.features.engineering --horizon 14
-Features h=14 (base_lag=14): (204000, 39) → /sessions/rcw-01y5pbjjgjn3pxvgkahjumm8/mnt/wm/retail-forecast/data/processed/features_h14.parquet
+Features h=14 (base_lag=14): (204000, 39) → /Volumes/marcos2/code/wm/retail-forecast/data/processed/features_h14.parquet
 Columnas de modelo (30): day_of_week, day_of_month, is_weekend, is_official_holiday, is_payday, is_navidad_season, is_buen_fin, is_semana_santa, days_to_payday, days_since_payday, days_to_holiday, days_since_holiday, days_to_christmas, buen_fin_day, days_to_buen_fin, days_since_buen_fin, lag_14d, lag_21d, lag_28d, lag_35d, same_dow_mean, roll_mean_7, roll_mean_28, roll_std_28, trend_ratio, has_promotion, promo_share_28, category, store_format, socioeconomic_level
 Filas elegibles: 190,998 de 204,000
 
@@ -19,4 +19,4 @@ regular     feb_2024            7.8   7.8     9.0
             oct_2023            8.1   8.0     9.3
             semana_santa_2023   8.7   8.7     9.7
             sep_2023            8.1   8.1     9.3
-→ /sessions/rcw-01y5pbjjgjn3pxvgkahjumm8/mnt/wm/retail-forecast/outputs/reports/baselines_h14.csv
+→ /Volumes/marcos2/code/wm/retail-forecast/outputs/reports/baselines_h14.csv

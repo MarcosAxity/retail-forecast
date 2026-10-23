@@ -1,4 +1,4 @@
-[01_eda_calidad_y_dinamica] inicio 2026-10-23 01:03:23
+[01_eda_calidad_y_dinamica] inicio 2026-10-23 12:06:09
 (203958, 13) (80, 9) (425, 15) | periodo 2023-01-01 -> 2024-02-29
 tiendas 80 | categorías 6 | series 480
 Filas esperadas (malla completa): 204,000 | observadas: 203,958 | ausentes: 42

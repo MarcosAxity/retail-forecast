@@ -36,6 +36,7 @@ STEPS = [
     ("10", "10_comparacion_modelos", "Competencia de modelos y argumentación de la métrica", "outputs/reports/backtest_predictions_h14.parquet", "outputs/10_*/"),
     ("11", "11_uplift_promocional", "Fase 4: uplift promocional (Capa 2)", "data/processed/panel.parquet", "outputs/11_*/ · resumen.json"),
     ("12", "12_exportar_artifacts", "Artifacts del modelo: modelo, especificación, métricas, entorno, manifiesto", "outputs/models · outputs/reports · configs", "artifacts/"),
+    ("13", "13_pronostico_proximos_14_dias", "Pronóstico de los 14 días siguientes al último dato (insumo del dashboard)", "artifacts/model/lgbm_h14.joblib · data/raw/*.csv", "outputs/13_*/pronostico_14d.csv"),
 ]
 
 

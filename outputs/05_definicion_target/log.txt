@@ -1,4 +1,4 @@
-[05_definicion_target] inicio 2026-10-23 01:03:41
+[05_definicion_target] inicio 2026-10-23 12:06:47
 203,958 filas observadas
 
 [tabla_01.csv]

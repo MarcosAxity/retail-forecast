@@ -9,7 +9,7 @@ def test_folds_are_whole_weeks_and_do_not_overlap():
     prev_end = None
     for f in sorted(FOLDS, key=lambda f: f.start):
         s, e = pd.Timestamp(f.start), pd.Timestamp(f.end)
-        assert s.dayofweek == 0 and e.dayofweek == 6 and ((e - s).days + 1) % 7 == 0
+        assert s.day_of_week == 0 and e.day_of_week == 6 and ((e - s).days + 1) % 7 == 0
         assert f.kind in ("regular", "evento", "post_evento")
         if prev_end is not None:
             assert s > prev_end
