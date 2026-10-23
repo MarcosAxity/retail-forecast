@@ -24,6 +24,8 @@ con capa queda en 12.0 % (antes 13.1 %), así que la propuesta pasa del 3.º al 
 
 ### Hallazgos de datos que condicionan el diseño
 
+El análisis completo, con evidencia y decisiones, está en [`docs/EDA.md`](docs/EDA.md) (documento único del EDA). Resumen:
+
 1. **`replenishment_signal` es fuga de información.** Es el promedio de `total_transactions` en la ventana [t−5, t+1] (coincide en 99.76 % de las filas) y la demanda del día objetivo se reconstruye con error < 0.5 transacciones en el 99.7 % de los casos. Se excluye (script 04).
 2. **`total_transactions` está inflado ≈ 22 % solo en días con promoción** y no coincide con efectivo + tarjeta; no mide demanda. El target es `amount_total` (script 05).
 3. **La promoción se asignó al azar** (≈ 20 % por serie-día, sin memoria, sin relación con segmento ni con la venta reciente): es un experimento natural y permite estimar uplift sin sesgo de selección (script 03).
