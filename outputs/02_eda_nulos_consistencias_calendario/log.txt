@@ -1,0 +1,76 @@
+[02_eda_nulos_consistencias_calendario] inicio 2026-10-23 00:15:56
+(203958, 40)
+¿cash_transactions y amount_cash son nulos siempre juntos?
+amount_cash nulo   False  True 
+cash_tx nulo                   
+False             191835      0
+True                   0  12123
+
+Filas con nulo simultáneo (diagonal = nulos de la columna):
+
+[tabla_01.csv]
+                cash_missing  units_missing  ticket_missing
+cash_missing           12123            349            4874
+units_missing            349           6118             150
+ticket_missing          4874            150            4874
+Tasa de nulos de efectivo por segmento (mín – máx entre niveles). Global: 5.94%
+category               5.8% – 6.1%
+store_format           5.7% – 6.0%
+region                 5.8% – 6.2%
+socioeconomic_level    5.8% – 6.1%
+has_promotion          5.9% – 6.0%
+is_official_holiday    5.9% – 6.4%
+day_of_week            5.7% – 6.1%
+month                  5.6% – 6.4%
+
+Desv. estándar entre tiendas: observada 0.55 pp | esperada por azar 0.47 pp | |z| máx 2.30
+cash_missing   P(nulo)=0.0594 | P(nulo | nulo ayer)=0.0571 | P(nulo | no nulo ayer)=0.0596
+units_missing  P(nulo)=0.0300 | P(nulo | nulo ayer)=0.0287 | P(nulo | no nulo ayer)=0.0300
+ticket_missing P(nulo)=0.0239 | P(nulo | nulo ayer)=0.0222 | P(nulo | no nulo ayer)=0.0239
+amount_total vs efectivo + tarjeta (filas comparables): 191835 | diferencia máx. abs: 3.5e-10 MXN
+
+has_promotion × (total_transactions ≠ efectivo + tarjeta):
+total ≠ efectivo+tarjeta   False   True     All
+has_promotion                                  
+0                         153540      0  153540
+1                              0  38295   38295
+All                       153540  38295  191835
+
+Exceso sobre efectivo + tarjeta en filas con promoción:
+       count  mean   std   min    5%   50%   95%   max
+0 38,295.000 0.223 0.072 0.083 0.111 0.222 0.336 0.350
+avg_ticket coincide con monto / total_transactions en 80.0% de las filas
+avg_ticket coincide con monto / (efectivo+tarjeta)  en 100.0% de las filas con efectivo
+
+Donde NO coincide con total_transactions:
+ticket ≠ monto/total_tx   False  True 
+has_promotion                         
+0                        159298      0
+1                             0  39786
+
+Reconstrucción de transacciones pagadas como monto/avg_ticket: error máx 0.26 transacciones
+Medias simples (sin controles) por estatus de promoción:
+
+[tabla_02.csv]
+                     sin promo   con promo  diferencia %
+total_transactions     586.833     718.200        22.386
+efectivo+tarjeta       586.833     587.063         0.039
+amount_total       170,495.010 170,355.425        -0.082
+units_sold           1,174.027   1,176.326         0.196
+avg_ticket             412.041     410.783        -0.305
+day_of_week coincide con la fecha     True
+is_weekend = sábado o domingo         True
+week_of_year = semana ISO             True
+is_payday = día 15 o fin de mes       True
+is_navidad_season = 15-dic a 6-ene    True
+
+Buen Fin     : ['2023-11-17', '2023-11-18', '2023-11-19', '2023-11-20']
+Semana Santa : ['2023-04-06', '2023-04-07']
+Días marcados is_holiday que además son Buen Fin: 4 → ['Buen Fin', 'Revolución Mexicana / Buen Fin']
+Festivos: ['Año Nuevo', 'Buen Fin', 'Día de Muertos', 'Día de la Constitución', 'Día de la Independencia', 'Día del Trabajo', 'Fin de Año', 'Jueves Santo', 'Natalicio Benito Juárez', 'Navidad', 'Nochebuena', 'Revolución Mexicana / Buen Fin', 'Viernes Santo', 'Virgen de Guadalupe']
+            count  mean   std   min  0.1%    1%   99%  99.9%   max
+ratio 203,958.000 1.090 0.450 0.120 0.220 0.450 2.740  4.580 6.950
+
+Filas con ratio > 3: 1,693 | % en Buen Fin/Nochebuena/Navidad/Fin de Año: 98.3%
+Filas con ratio < 0.3: 532 | fechas más frecuentes: {'2024-01-01': 449, '2023-05-01': 43, '2024-02-05': 14, '2023-03-20': 11}
+Plausibilidad → unidades/transacción: 0.89 a 2.8 | ticket: 70 a 1932 | duplicados: 0 | montos idénticos al día anterior: 0

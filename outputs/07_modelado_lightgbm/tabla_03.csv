@@ -1,0 +1,10 @@
+,WAPE desarrollo %,WAPE confirmación %,sesgo desarrollo %,Δ desarrollo (pts),Δ confirmación (pts),decisión
+"base (30 features, objetivo L2 en log)",7.6,7.42,-0.7,0.0,0.0,referencia
++ month y week_of_year,7.46,7.18,0.04,-0.14,-0.24,no adoptar
+"+ atributos de tienda (región, m², cajas, farmacia, gasolinera, año)",7.64,7.38,-0.85,0.04,-0.04,no adoptar
++ rezagos limpios que excluyen días de evento,7.76,8.36,-0.76,0.16,0.94,no adoptar
+"− promoción (has_promotion, promo_share_28)",7.59,7.39,-0.69,-0.01,-0.03,no adoptar
+− distancias de calendario (solo banderas),7.74,7.58,-0.4,0.14,0.16,no adoptar
+− variables de Buen Fin y Navidad,7.75,8.45,-0.32,0.15,1.03,no adoptar
+objetivo L1 en log (mediana),7.67,7.5,0.13,0.07,0.08,no adoptar
+objetivo Huber en log,7.6,7.41,-0.69,-0.0,-0.01,no adoptar

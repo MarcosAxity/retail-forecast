@@ -1,0 +1,4 @@
+variante,C1 Δ WAPE regulares (pts),C2 sesgo post_navidad (%),C3 Δ WAPE Buen Fin (pts),C3 Δ WAPE Navidad (pts),C1 ok,C2 ok,C3 ok,cumple las 3
+V1 reinicio,-0.0026437603511118013,13.609119557104293,0.0,0.0,True,True,True,True
+V2 multiplicativo,-0.10089580282915911,59.15084729499315,-0.5230300730998607,-1.5114652705363376,True,False,True,False
+V1+V2,-0.10320312779801366,13.176820654169058,-0.5230300730998607,-1.5114652705363376,True,True,True,True

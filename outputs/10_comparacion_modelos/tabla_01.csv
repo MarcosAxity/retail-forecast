@@ -1,0 +1,9 @@
+,,alpha,WAPE desarrollo %,max_depth,min_samples_leaf
+ridge,0,1.0,7.17,,
+ridge,1,10.0,7.17,,
+ridge,2,100.0,7.2,,
+xgb,0,,7.65,4.0,
+xgb,1,,7.67,6.0,
+xgb,2,,7.7,8.0,
+rf,0,,7.65,,10.0
+rf,1,,7.96,,50.0

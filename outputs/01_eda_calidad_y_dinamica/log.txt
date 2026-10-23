@@ -1,0 +1,125 @@
+[01_eda_calidad_y_dinamica] inicio 2026-10-23 00:15:55
+(203958, 13) (80, 9) (425, 15) | periodo 2023-01-01 -> 2024-02-29
+tiendas 80 | categorías 6 | series 480
+Filas esperadas (malla completa): 204,000 | observadas: 203,958 | ausentes: 42
+
+[tabla_01.csv]
+              desde      hasta  filas
+store_id                             
+STR_045  2023-02-01 2023-02-02     12
+STR_055  2024-02-18 2024-02-20     18
+STR_064  2023-02-22 2023-02-23     12
+
+[tabla_02.csv]
+cash_transactions       5.94
+amount_cash             5.94
+units_sold              3.00
+avg_ticket              2.39
+replenishment_signal    0.47
+
+[fig_01.png]
+tienda-semanas con efectivo 100% nulo: 0 de 4960
+
+[fig_02.png]
+
+[tabla_03.csv]
+                      mean    median           sum  share
+category                                                 
+Abarrotes         257363.0  203838.0  8.748550e+09  0.251
+Bebidas           131808.0  104335.0  4.480565e+09  0.129
+Cuidado_Personal  107984.0   85540.0  3.670696e+09  0.106
+Electronica       185222.0  147017.0  6.296238e+09  0.181
+Hogar             172425.0  136760.0  5.861226e+09  0.168
+Ropa              168686.0  134074.0  5.734136e+09  0.165
+               n      sqm  cajas
+store_format                    
+Bodega        35   5442.0   14.0
+Express       25   1975.0    7.0
+Supercenter   20  11875.0   29.0
+CV del nivel entre tiendas (log): 4.47%
+
+[fig_03.png]
+
+[tabla_04.csv]
+day_of_week
+0    0.732
+1    0.773
+2    0.795
+3    0.859
+4    1.107
+5    1.409
+6    1.324
+
+[tabla_05.csv]
+date
+2023-10-22    0.95
+2023-10-29    0.95
+2023-11-05    1.26
+2023-11-12    1.21
+2023-11-19    2.39
+2023-11-26    1.40
+2023-12-03    1.40
+2023-12-10    1.46
+2023-12-17    1.66
+2023-12-24    1.98
+2023-12-31    2.15
+2024-01-07    0.82
+2024-01-14    0.84
+2024-01-21    0.87
+2024-01-28    0.83
+Freq: W-SUN
+% filas con promoción: 19.97
+
+[tabla_06.csv]
+                                      % promo
+variable            nivel                    
+day_of_week         0                    20.3
+                    1                    19.7
+                    2                    19.9
+                    3                    20.0
+                    4                    19.8
+                    5                    20.0
+                    6                    20.1
+is_payday           False                20.0
+                    True                 20.2
+is_buen_fin         False                20.0
+                    True                 20.3
+is_navidad_season   False                20.0
+                    True                 19.6
+store_format        Bodega               19.9
+                    Express              20.0
+                    Supercenter          20.1
+region              Centro               20.0
+                    Norte                20.1
+                    Occidente            19.8
+                    Oriente              20.2
+                    Sur                  19.7
+socioeconomic_level C                    19.9
+                    C+                   20.3
+                    B                    19.7
+                    A/B                  19.6
+category            Abarrotes            19.9
+                    Bebidas              20.0
+                    Cuidado_Personal     19.9
+                    Electronica          20.0
+                    Hogar                20.2
+                    Ropa                 19.9
+autocorrelación lag-1 de la promoción: -0.002 | duración media de una promo: 1.25 días | % de promos de 1 día: 80%
+
+[fig_04.png]
+amount_total         efecto aparente de la promo: +0.03%
+total_transactions   efecto aparente de la promo: +22.15%
+
+% filas donde total_transactions != efectivo + tarjeta:
+has_promotion
+0      0.0
+1    100.0
+Name: tx_inflated, dtype: float64
+coincide con el promedio de total_transactions en [t-5, t+1]: 99.76%
+fechas con nulo (primeras): {Timestamp('2023-01-01 00:00:00'): 480, Timestamp('2023-01-02 00:00:00'): 480}
+|residuo| > 1 (en log) por tipo de día:
+         sum      mean
+evento                
+False    180  0.000957
+True    3563  0.224937
+mínimo amount_total: 6922 | ceros: 0

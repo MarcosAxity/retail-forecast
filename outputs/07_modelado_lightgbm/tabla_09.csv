@@ -1,0 +1,13 @@
+,% de la importancia total
+same_dow_mean,29.2
+roll_mean_28,12.2
+day_of_week,10.7
+roll_mean_7,9.6
+lag_14d,6.9
+days_since_buen_fin,3.9
+roll_std_28,3.6
+is_payday,2.9
+store_format,2.3
+days_to_buen_fin,2.3
+days_to_christmas,2.1
+is_weekend,1.6

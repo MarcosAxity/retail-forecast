@@ -1,0 +1,8 @@
+,sma4,snaive (14 d),ma28,ETS por serie,Ridge,Random Forest,XGBoost,LightGBM (06),Spearman con WAPE
+wape,2,5,1,8,7,6,3,4,1.0
+mape,2,6,1,8,7,5,3,4,0.98
+smape,2,5,1,7,8,6,3,4,0.98
+mae,2,5,1,8,7,6,3,4,1.0
+rmse,2,5,1,8,7,6,3,4,1.0
+|sesgo|,5,4,6,1,2,3,7,8,-0.79
+wape_asim,2,5,1,8,7,6,3,4,1.0

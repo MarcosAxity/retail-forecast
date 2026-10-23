@@ -1,0 +1,211 @@
+[09_modelado_eventos] inicio 2026-10-23 00:18:18
+30 features | 190998 filas elegibles | datos: 2023-01-01 → 2024-02-29
+Cobertura contigua 2023-03-27 → 2024-02-25 | 48 semanas
+
+[tabla_01.csv]
+                          tipo      inicio         fin  semanas        origen
+fold                                                                         
+semana_santa_2023      regular  2023-03-27  2023-04-23        4  oficial (06)
+abr_may_2023           regular  2023-04-24  2023-05-28        5   extra (06b)
+may_jun_2023           regular  2023-05-29  2023-06-25        4  oficial (06)
+jun_jul_2023           regular  2023-06-26  2023-07-23        4   extra (06b)
+jul_ago_2023           regular  2023-07-24  2023-08-20        4   extra (06b)
+ago_sep_2023           regular  2023-08-21  2023-09-03        2   extra (06b)
+sep_2023               regular  2023-09-04  2023-10-01        4  oficial (06)
+oct_2023               regular  2023-10-02  2023-10-29        4  oficial (06)
+pre_buen_fin_2023       evento  2023-10-30  2023-11-05        1   extra (06b)
+buen_fin_2023           evento  2023-11-06  2023-12-03        4  oficial (06)
+pre_navidad_2023        evento  2023-12-04  2023-12-10        1   extra (06b)
+navidad_2023            evento  2023-12-11  2024-01-07        4  oficial (06)
+post_navidad_2024  post_evento  2024-01-08  2024-02-11        5  oficial (06)
+feb_2024               regular  2024-02-12  2024-02-25        2  oficial (06)
+filas oficiales: 104142 | filas que no cuadran: 0 | máx |Δ pronóstico| (MXN): 0.0
+
+[fig_01.png]
+WAPE % serie x semana en los folds extra (solo se reportan):
+
+[tabla_02.csv]
+modelo              REF  sma4  snaive  ma28
+fold                                       
+abr_may_2023       7.50  7.60    9.00  7.90
+jun_jul_2023       7.00  7.60    8.60  7.80
+jul_ago_2023       6.70  7.30    9.40  7.20
+ago_sep_2023       7.10  6.70    8.60  6.70
+pre_buen_fin_2023 29.60 22.10   24.90 21.90
+pre_navidad_2023   8.80  9.20    9.30  8.00
+
+[tabla_03.csv]
+                     WAPE REF  WAPE sma4  Δ pts  IC95 inf  IC95 sup  p (bootstrap)  semanas  semanas REF mejor  p Wilcoxon
+regulares oficiales      7.59       8.19  -0.60     -1.11     -0.15           0.01    18.00              11.00        0.04
+regulares extra          7.06       7.38  -0.32     -0.61     -0.03           0.03    15.00               9.00        0.19
+todos los regulares      7.34       7.81  -0.47     -0.78     -0.19           0.00    33.00              20.00        0.01
+Primer día de Buen Fin: 2023-11-17 | ventanas de evento (unión):
+   2023-01-01 → 2023-01-08
+   2023-10-27 → 2024-01-08
+
+Fechas con corrección: 2023-01-30 → 2024-02-12 | filas: 23520 de 204000
+Fechas contaminadas sin corrección posible (clean_sma4 NaN): 7200
+Factor medio por semana (clean_sma4 / sma4):
+
+[tabla_04.csv]
+            mean  min  max  size
+semana                          
+2023-01-30  1.03 0.70 1.58  3360
+2023-02-06  1.00 0.78 1.22  3360
+2024-01-08  0.59 0.25 1.20  2880
+2024-01-15  0.64 0.25 1.45  3360
+2024-01-22  0.71 0.25 1.27  3360
+2024-01-29  0.82 0.41 1.34  3360
+2024-02-05  1.06 0.78 1.54  3360
+2024-02-12  1.03 0.86 1.25   480
+filas: 161262 | V1 difiere de REF en los folds regulares solo en: ['feb_2024']
+WAPE % serie x semana (la métrica del 06):
+
+[tabla_05.csv]
+                          tipo        origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
+fold                                                                                           
+semana_santa_2023      regular  oficial (06)  7.60         7.60               6.90   6.90  8.70
+abr_may_2023           regular   extra (06b)  7.50         7.50               7.20   7.20  7.60
+may_jun_2023           regular  oficial (06)  7.00         7.00               7.00   7.00  8.10
+jun_jul_2023           regular   extra (06b)  7.00         7.00               6.90   6.90  7.60
+jul_ago_2023           regular   extra (06b)  6.70         6.70               6.70   6.70  7.30
+ago_sep_2023           regular   extra (06b)  7.10         7.10               7.00   7.00  6.70
+sep_2023               regular  oficial (06)  8.20         8.20               8.40   8.40  8.10
+oct_2023               regular  oficial (06)  7.80         7.80               7.80   7.80  8.00
+pre_buen_fin_2023       evento   extra (06b) 29.60        29.60              29.80  29.80 22.10
+buen_fin_2023           evento  oficial (06) 34.50        34.50              34.00  34.00 31.50
+pre_navidad_2023        evento   extra (06b)  8.80         8.80              10.00  10.00  9.20
+navidad_2023            evento  oficial (06) 28.50        28.50              27.00  27.00 29.20
+post_navidad_2024  post_evento  oficial (06) 57.90        14.80              59.80  14.50 62.90
+feb_2024               regular  oficial (06)  7.10         7.00               7.00   7.00  7.80
+Sesgo % de cadena (Σ(pronóstico − real) / Σreal; positivo = sobrepronóstico):
+
+[tabla_06.csv]
+                          tipo        origen    REF  V1 reinicio  V2 multiplicativo  V1+V2   sma4
+fold                                                                                             
+semana_santa_2023      regular  oficial (06)  -3.60        -3.60              -1.90  -1.90  -2.40
+abr_may_2023           regular   extra (06b)  -3.20        -3.20              -3.00  -3.00  -3.40
+may_jun_2023           regular  oficial (06)  -1.40        -1.40              -1.60  -1.60  -5.40
+jun_jul_2023           regular   extra (06b)   0.90         0.90               1.10   1.10  -3.00
+jul_ago_2023           regular   extra (06b)  -1.30        -1.30              -1.20  -1.20  -2.60
+ago_sep_2023           regular   extra (06b)   0.20         0.20               0.10   0.10  -0.70
+sep_2023               regular  oficial (06)   3.00         3.00               2.50   2.50   2.80
+oct_2023               regular  oficial (06)   3.90         3.90               1.60   1.60   4.30
+pre_buen_fin_2023       evento   extra (06b) -29.60       -29.60             -29.80 -29.80 -22.10
+buen_fin_2023           evento  oficial (06) -34.20       -34.20             -33.30 -33.30 -28.90
+pre_navidad_2023        evento   extra (06b)   3.10         3.10               8.00   8.00   6.90
+navidad_2023            evento  oficial (06)  -8.60        -8.60              -4.80  -4.80  -3.60
+post_navidad_2024  post_evento  oficial (06)  57.40        13.60              59.20  13.20  61.70
+feb_2024               regular  oficial (06)  -1.40        -1.20              -1.40  -1.20  -3.90
+WAPE % total de cadena x semana (error de nivel, sin el reparto entre series):
+
+[tabla_07.csv]
+                          tipo        origen   REF  V1 reinicio  V2 multiplicativo  V1+V2  sma4
+fold                                                                                           
+semana_santa_2023      regular  oficial (06)  3.60         3.60               1.90   1.90  6.50
+abr_may_2023           regular   extra (06b)  3.20         3.20               3.00   3.00  3.90
+may_jun_2023           regular  oficial (06)  1.40         1.40               1.60   1.60  5.40
+jun_jul_2023           regular   extra (06b)  1.40         1.40               1.50   1.50  3.90
+jul_ago_2023           regular   extra (06b)  1.30         1.30               1.20   1.20  3.30
+ago_sep_2023           regular   extra (06b)  2.70         2.70               2.60   2.60  0.70
+sep_2023               regular  oficial (06)  4.50         4.50               5.00   5.00  4.10
+oct_2023               regular  oficial (06)  3.90         3.90               3.80   3.80  4.30
+pre_buen_fin_2023       evento   extra (06b) 29.60        29.60              29.80  29.80 22.10
+buen_fin_2023           evento  oficial (06) 34.20        34.20              33.30  33.30 30.50
+pre_navidad_2023        evento   extra (06b)  3.10         3.10               8.00   8.00  6.90
+navidad_2023            evento  oficial (06) 27.40        27.40              25.00  25.00 27.90
+post_navidad_2024  post_evento  oficial (06) 57.40        13.60              59.20  13.20 61.70
+feb_2024               regular  oficial (06)  1.40         1.20               1.40   1.20  3.90
+REF: WAPE medio regulares 7.31 % | sesgo post_navidad 57.4 %
+
+[tabla_08.csv]
+                   C1 Δ WAPE regulares (pts)  C2 sesgo post_navidad (%)  C3 Δ WAPE Buen Fin (pts)  C3 Δ WAPE Navidad (pts)  C1 ok  C2 ok  C3 ok  cumple las 3
+variante                                                                                                                                                     
+V1 reinicio                            -0.00                      13.61                      0.00                     0.00   True   True   True          True
+V2 multiplicativo                      -0.10                      59.15                     -0.52                    -1.51   True  False   True         False
+V1+V2                                  -0.10                      13.18                     -0.52                    -1.51   True   True   True          True
+Regla del 06 para adoptar un cambio: mejora >= 0.2 pts en desarrollo (diferencia negativa = mejor).
+
+[tabla_09.csv]
+                   desarrollo (pts vs REF)  confirmación (pts vs REF)  extra regulares (pts vs REF)
+V1 reinicio                           0.00                      -0.01                          0.00
+V2 multiplicativo                    -0.17                      -0.04                         -0.08
+V1+V2                                -0.17                      -0.05                         -0.08
+Filas de prueba con rezagos contaminados y sin ancla limpio disponible: 0
+
+[tabla_10.csv]
+               real  pred_ref  pred_v1  pred_v2  pred_v12  err % pred_ref  err % pred_v1  err % pred_v2  err % pred_v12
+semana                                                                                                                 
+2023-10-30   706.00    497.00   497.00   496.00    496.00          -30.00         -30.00         -30.00          -30.00
+2023-11-06   676.00    506.00   506.00   504.00    504.00          -25.00         -25.00         -25.00          -25.00
+2023-11-13 1,336.00    553.00   553.00   556.00    556.00          -59.00         -59.00         -58.00          -58.00
+2023-11-20   783.00    589.00   589.00   591.00    591.00          -25.00         -25.00         -24.00          -24.00
+2023-11-27   783.00    707.00   707.00   737.00    737.00          -10.00         -10.00          -6.00           -6.00
+2023-12-04   819.00    844.00   844.00   885.00    885.00            3.00           3.00           8.00            8.00
+2023-12-11   927.00    871.00   871.00   916.00    916.00           -6.00          -6.00          -1.00           -1.00
+2023-12-18 1,106.00    885.00   885.00   943.00    943.00          -20.00         -20.00         -15.00          -15.00
+2023-12-25 1,202.00    814.00   814.00   825.00    825.00          -32.00         -32.00         -31.00          -31.00
+2024-01-01   460.00    808.00   808.00   835.00    835.00           75.00          75.00          81.00           81.00
+2024-01-08   471.00    943.00   584.00   968.00    595.00          100.00          24.00         105.00           26.00
+2024-01-15   486.00    890.00   552.00   918.00    560.00           83.00          14.00          89.00           15.00
+2024-01-22   467.00    752.00   512.00   770.00    515.00           61.00          10.00          65.00           10.00
+2024-01-29   505.00    685.00   553.00   668.00    535.00           36.00          10.00          32.00            6.00
+2024-02-05   467.00    500.00   520.00   487.00    505.00            7.00          11.00           4.00            8.00
+2024-02-12   512.00    504.00   506.00   503.00    505.00           -2.00          -1.00          -2.00           -1.00
+2024-02-19   488.00    483.00   483.00   483.00    483.00           -1.00          -1.00          -1.00           -1.00
+
+[fig_02.png]
+
+[tabla_11.csv]
+                   WAPE variante  WAPE REF  Δ pts  IC95 inf  IC95 sup  p (bootstrap)  semanas  semanas variante mejor  p Wilcoxon
+V1 reinicio                 7.34      7.34  -0.00     -0.00      0.00           0.75    33.00                    1.00        0.32
+V2 multiplicativo           7.24      7.34  -0.10     -0.25      0.03           0.14    33.00                   19.00        0.23
+V1+V2                       7.24      7.34  -0.10     -0.25      0.03           0.13    33.00                   19.00        0.20
+factor2 con las mismas ventanas reproduce reset_factor de la sección 3.
+
+[tabla_12.csv]
+                     post_nav WAPE  post_nav sesgo  navidad WAPE  pre_navidad WAPE  buen_fin WAPE  pre_buen_fin WAPE  Δ regulares (pts)  rampa peor > 2 pts
+REF (sin reinicio)           57.90           57.40         28.50              8.80          34.50              29.60               0.00               False
+Fase 2 (base)                14.80           13.60         28.50              8.80          34.50              29.60              -0.00               False
+Buen Fin antes 14            19.10           18.50         28.50              8.80          34.50              29.60              -0.00               False
+Buen Fin antes 28            15.60           14.60         28.50              8.80          34.50              29.60              -0.00               False
+Buen Fin después 14          25.30           25.00         28.50             12.10          37.20              29.60              -0.00                True
+Buen Fin después 28          14.80           13.60         28.50              8.80          34.50              29.60              -0.00               False
+Navidad antes 10             29.50           29.30         30.40             20.10          34.50              29.60              -0.00                True
+Navidad antes 24             14.80           13.60         28.50              8.80          34.50              29.60              -0.00               False
+Navidad después 7            11.20            8.90         20.90              8.80          34.50              29.60               0.00               False
+Navidad después 21           33.90           33.40         28.50              8.80          34.50              29.60              -0.00               False
+todas cortas                 32.00           31.70         25.20             31.80          37.40              29.60               0.00                True
+todas largas                 34.10           33.60         28.50              8.80          34.50              29.60              -0.00               False
+
+[tabla_13.csv]
+                                post_nav WAPE  post_nav sesgo  navidad WAPE  pre_navidad WAPE  buen_fin WAPE  pre_buen_fin WAPE  Δ regulares (pts)
+V1 (destino hasta +14 = 8-ene)          14.80           13.60         28.50              8.80          34.50              29.60              -0.00
+destino hasta +12 (6-ene)               12.80           11.30         26.20              8.80          34.50              29.60              -0.00
+V1b destino hasta +6 (31-dic)           12.80           11.30         20.70              8.80          34.50              29.60              -0.00
+
+[tabla_14.csv]
+               real  pred_ref  pred_v1  pred_v1b  err % pred_ref  err % pred_v1  err % pred_v1b
+semana                                                                                         
+2023-12-18 1,106.00    885.00   885.00    885.00          -20.00         -20.00          -20.00
+2023-12-25 1,202.00    814.00   814.00    814.00          -32.00         -32.00          -32.00
+2024-01-01   460.00    808.00   808.00    494.00           75.00          75.00            7.00
+2024-01-08   471.00    943.00   584.00    529.00          100.00          24.00           12.00
+2024-01-15   486.00    890.00   552.00    552.00           83.00          14.00           14.00
+2024-01-22   467.00    752.00   512.00    512.00           61.00          10.00           10.00
+2024-01-29   505.00    685.00   553.00    553.00           36.00          10.00           10.00
+2024-02-05   467.00    500.00   520.00    520.00            7.00          11.00           11.00
+2024-02-12   512.00    504.00   506.00    506.00           -2.00          -1.00           -1.00
+WAPE % serie x semana por fold:
+
+[tabla_15.csv]
+                          tipo        origen   REF  V1 reinicio  V1b (31-dic)
+fold                                                                         
+pre_buen_fin_2023       evento   extra (06b) 29.60        29.60         29.60
+buen_fin_2023           evento  oficial (06) 34.50        34.50         34.50
+pre_navidad_2023        evento   extra (06b)  8.80         8.80          8.80
+navidad_2023            evento  oficial (06) 28.50        28.50         20.70
+post_navidad_2024  post_evento  oficial (06) 57.90        14.80         12.80
+feb_2024               regular  oficial (06)  7.10         7.00          7.00
+Δ WAPE regulares vs REF (pts): V1 -0.00 | V1b -0.00
+Sesgo post_navidad (%): V1 13.6 | V1b 11.3

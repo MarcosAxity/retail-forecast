@@ -1,0 +1,90 @@
+[03_eda_tiendas_promocion_ruido] inicio 2026-10-23 00:15:57
+(203958, 40)
+R² del formato solo: 0.783 | con todos los atributos: 0.893
+
+[tabla_01.csv]
+                     R² solo  ΔR² sobre formato  p (permutación)
+region                 0.004              0.015            0.258
+socioeconomic_level    0.073              0.075            0.001
+has_pharmacy           0.255              0.008            0.085
+has_fuel_station       0.092              0.001            0.558
+opening_year           0.005              0.002            0.415
+size_sqm               0.595              0.002            0.443
+num_checkouts          0.616              0.002            0.448
+Correlación del nivel con atributos numéricos DENTRO de cada formato (media removida por formato):
+{'opening_year': np.float64(-0.094), 'size_sqm': np.float64(-0.089), 'num_checkouts': np.float64(0.087)}
+
+Formato × (farmacia, gasolinera) — nº de tiendas:
+farmacia       0       1   
+gasolinera     0   1   0  1
+store_format               
+Bodega        19  16   0  0
+Express       25   0   0  0
+Supercenter    4   1  10  5
+
+Efecto multiplicativo sobre la venta diaria (base: Bodega y nivel A/B):
+formato=Express        -52.1 %
+formato=Supercenter     60.7 %
+socio=B                -14.0 %
+socio=C                -36.9 %
+socio=C+               -28.7 %
+dtype: str
+Multiplicador medio de la tienda (× nivel de referencia) por formato:
+
+[tabla_02.csv]
+              Buen Fin (4 días)  Navidad (18-31 dic)
+store_format                                        
+Bodega                    3.340                1.220
+Express                   2.670                1.310
+Supercenter               3.390                1.390
+
+[fig_01.png]
+Rango máx−mín entre formatos dentro de un mismo mes: 0.013 log | variación del nivel común entre el mes más bajo y el más alto: 0.64 log
+
+Participación por categoría entre tiendas (%):
+
+[tabla_03.csv]
+                  media  desv. est. entre tiendas    mín    máx
+category                                                       
+Abarrotes        25.130                     0.200 24.580 25.720
+Bebidas          12.870                     0.130 12.610 13.230
+Cuidado_Personal 10.560                     0.110 10.260 10.840
+Electronica      18.090                     0.170 17.740 18.520
+Hogar            16.860                     0.150 16.520 17.250
+Ropa             16.480                     0.130 16.080 16.740
+Tasa global de promoción: 19.98%
+                     tasa mín %  tasa máx %  p (chi²)
+variable                                             
+category                 19.881      20.189     0.938
+store_format             19.938      20.061     0.855
+region                   19.736      20.196     0.316
+socioeconomic_level      19.639      20.336     0.019
+has_pharmacy             19.963      20.039     0.742
+has_fuel_station         19.970      19.980     0.964
+day_of_week              19.734      20.271     0.753
+is_payday                19.960      20.216     0.481
+is_official_holiday      19.420      19.996     0.251
+is_buen_fin              19.974      20.260     0.777
+is_navidad_season        19.634      20.002     0.299
+month                    19.674      20.544     0.653
+
+KS de los p-valores contra U(0,1): p = 0.42   (si fuera asignación dirigida esperaríamos p-valores pequeños)
+Dispersión de la tasa entre tiendas: observada 0.83 pp | esperada por azar 0.79 pp
+Dispersión de la fracción diaria de series en promoción: observada 1.81 pp | esperada 1.82 pp
+P(promo | promo ayer) = 0.200 | P(promo | sin promo ayer) = 0.200
+Duración de una promoción: media 1.249 días | esperada si cada día es Bernoulli(0.20): 1.250
+Venta (log, centrada)  1 días antes: promo − no promo = +0.0012 (±0.0044)
+Venta (log, centrada)  7 días antes: promo − no promo = -0.0007 (±0.0044)
+Venta (log, centrada) 14 días antes: promo − no promo = -0.0017 (±0.0045)
+σ residual (log): 0.198 | autocorrelación lag-1/7/28 del residuo por serie: [np.float64(0.003), np.float64(0.001), np.float64(-0.0)]
+
+[tabla_04.csv]
+                    WAPE piso %  MAPE piso %
+serie × día              15.600       16.100
+tienda × día              7.000        6.700
+categoría × día           2.600        2.400
+total × día               2.100        1.900
+serie × semana            6.500        6.200
+tienda × semana           3.400        3.100
+categoría × semana        2.100        1.900
+total × semana            2.100        1.900

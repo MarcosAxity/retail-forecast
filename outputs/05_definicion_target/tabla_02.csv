@@ -1,0 +1,5 @@
+,efecto promoción %,IC95% inf,IC95% sup
+amount_total,0.03,-0.41,0.48
+units_sold,0.31,-0.19,0.82
+efectivo + tarjeta,0.09,-0.35,0.52
+total_transactions,22.15,21.63,22.67

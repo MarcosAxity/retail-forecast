@@ -1,0 +1,6 @@
+,valor
+var(log monto),0.037
+var(log precio efectivo diario),0.0682
+"2·cov(monto, precio)",0.0283
+var(monto)+var(precio)−2·cov,0.077
+var(log unidades) observada,0.077

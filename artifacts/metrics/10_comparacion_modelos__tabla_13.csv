@@ -1,0 +1,11 @@
+,resultado
+WAPE regulares propuesta (%),7.312013393178075
+mejor competidor en regulares,Ridge + capa
+WAPE del mejor competidor (%),7.253157819968562
+diferencia vs mejor (pts),0.05885557320951307
+competidores que la superan con significancia,ninguno
+competidores a los que supera con significancia,"sma4 + capa, snaive (14 d) + capa, ma28 + capa, ETS por serie + capa"
+empates técnicos (IC95 incluye 0),"Ridge + capa, Random Forest + capa, XGBoost + capa"
+K1 (regulares),cumple
+puesto en post-evento con capa (de 8),4
+K2 (post-evento),NO cumple

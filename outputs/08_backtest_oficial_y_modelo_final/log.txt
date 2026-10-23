@@ -1,0 +1,12 @@
+[08_backtest_oficial_y_modelo_final] inicio 2026-10-23 00:18:09
+modelo                         ma28  modelo  sma4  snaive
+tipo        fold                                         
+evento      buen_fin_2023      33.4    34.5  31.5    40.2
+            navidad_2023       25.5    28.5  29.2    36.8
+post_evento post_navidad_2024  71.7    57.9  62.9    37.8
+regular     feb_2024            7.8     7.1   7.8     9.0
+            may_jun_2023        8.2     7.0   8.1     8.9
+            oct_2023            8.1     7.8   8.0     9.3
+            semana_santa_2023   8.7     7.6   8.7     9.7
+            sep_2023            8.1     8.2   8.1     9.3
+Modelo final entrenado con 190,998 filas hasta 2024-02-29 → outputs/models/lgbm_h14.joblib

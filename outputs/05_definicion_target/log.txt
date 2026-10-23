@@ -1,0 +1,99 @@
+[05_definicion_target] inicio 2026-10-23 00:16:13
+203,958 filas observadas
+
+[tabla_01.csv]
+                    % nulos                                                      consistencia
+amount_total          0.000                  = efectivo + tarjeta (diferencia máx. 3e-10 MXN)
+units_sold            3.000     unidades por transacción pagada entre 1.18 y 2.80 (plausible)
+total_transactions    0.000  ≠ efectivo + tarjeta en 20.0% de las filas (todas con promoción)
+
+[tabla_02.csv]
+                    efecto promoción %  IC95% inf  IC95% sup
+amount_total                     0.030     -0.410      0.480
+units_sold                       0.310     -0.190      0.820
+efectivo + tarjeta               0.090     -0.350      0.520
+total_transactions              22.150     21.630     22.670
+Filas comparables: 167,687 (días normales, sin nulos en ninguna variable)
+
+[tabla_03.csv]
+                        σ del ruido  piso WAPE %  piso MAPE %
+amount_total                  0.192       15.224       15.509
+units_sold                    0.277       21.803       22.659
+efectivo + tarjeta            0.151       11.985       12.123
+total_transactions            0.172       13.589       13.791
+precio efectivo diario        0.261       20.560       21.274
+
+[tabla_04.csv]
+                    % nulos  efecto aparente de la promoción %  σ ruido  piso WAPE %                                veredicto
+amount_total          0.000                              0.033    0.192       15.224                                   TARGET
+units_sold            3.000                              0.310    0.277       21.803                        derivar del monto
+total_transactions    0.000                             22.148    0.172       13.589  no pronosticar (artefacto de promoción)
+
+[fig_01.png]
+
+[tabla_05.csv]
+                  pendiente % por mes  p-valor  variación acumulada 14 meses %  desv. máx. mensual vs 1 %  error estándar mensual %
+Abarrotes                       0.042    0.307                           0.551                      1.012                     0.570
+Bebidas                        -0.003    0.951                          -0.037                      1.315                     0.572
+Cuidado_Personal                0.015    0.693                           0.199                      0.908                     0.568
+Electronica                     0.093    0.082                           1.203                      2.252                     0.568
+Hogar                          -0.003    0.941                          -0.037                      1.118                     0.569
+Ropa                            0.007    0.870                           0.089                      1.264                     0.567
+Índice de precio medio por grupo (1.000 = sin diferencia):
+promoción         con promoción        0.998
+                  sin promoción        1.001
+formato           Bodega               1.000
+                  Express              1.000
+                  Supercenter          1.000
+evento            Buen Fin             1.007
+                  día normal           1.000
+                  festivo              1.002
+                  temporada navideña   0.996
+día de la semana  dom                  1.000
+                  jue                  0.999
+                  lun                  0.999
+                  mar                  0.998
+                  mié                  1.001
+                  sáb                  1.002
+                  vie                  1.002
+
+Precio unitario por serie: dispersión entre las 80 tiendas, por categoría (MXN):
+
+[tabla_06.csv]
+                    mean    std     min     max  CV entre tiendas
+category                                                         
+Abarrotes        113.300 19.536  90.769 163.479             0.172
+Bebidas           74.548 12.636  60.138 109.358             0.170
+Cuidado_Personal  95.324 16.112  76.884 136.758             0.169
+Electronica      489.546 83.440 391.540 698.670             0.170
+Hogar            196.130 32.894 158.413 285.411             0.168
+Ropa             267.539 45.532 214.132 382.941             0.170
+
+[tabla_07.csv]
+                                 valor
+var(log monto)                   0.037
+var(log precio efectivo diario)  0.068
+2·cov(monto, precio)             0.028
+var(monto)+var(precio)−2·cov     0.077
+var(log unidades) observada      0.077
+WAPE y sesgo a nivel tienda × categoría × día, horizonte 14 días:
+
+[tabla_08.csv]
+fold                               buen_fin_2023  feb_2024  sep_2023  buen_fin_2023 (sesgo %)  feb_2024 (sesgo %)  sep_2023 (sesgo %)
+unidades                                                                                                                             
+(monto: WAPE de amount_total)             37.600    16.200    18.000                      NaN                 NaN                 NaN
+derivado · precio de la categoría         42.500    26.300    27.900                  -33.400              -1.500               2.900
+derivado · precio de la serie             40.900    23.200    24.800                  -33.300              -1.400               2.900
+derivado · precio serie 90 d              40.900    23.300    24.900                  -33.300              -1.500               2.800
+directo                                   41.600    23.300    24.600                  -35.500              -3.400              -0.000
+
+[tabla_09.csv]
+                     WAPE %  sesgo %
+deriva del precio δ                 
+-10%                 24.100  -11.200
+-5%                  23.400   -6.300
+-2%                  23.200   -3.300
++0%                  23.200   -1.400
++2%                  23.400    0.600
++5%                  23.700    3.600
++10%                 24.600    8.500

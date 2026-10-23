@@ -1,0 +1,4 @@
+escenario,efecto %,venta incremental por serie-día con promoción (MXN),venta incremental total de las promociones del periodo (MXN)
+cota inferior (IC95 más amplio),-0.7401456757743933,-1262.549803908001,-51844106.490896136
+estimación puntual (FE serie + fecha),-0.24954589140174294,-425.6785205502623,-17393675.5099912
+cota superior (IC95 más amplio),0.18430093766684724,314.382857763619,12790387.25982172

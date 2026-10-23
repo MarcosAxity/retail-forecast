@@ -1,0 +1,87 @@
+{
+  "modelo": "LightGBM global (una sola ecuación para las 480 series tienda × categoría)",
+  "horizonte_dias": 14,
+  "target": "amount_total (MXN); se modela log(amount_total) con objetivo L2",
+  "metrica_principal": "WAPE en tienda × categoría × semana (con sesgo al lado)",
+  "features": [
+    "day_of_week",
+    "day_of_month",
+    "is_weekend",
+    "is_official_holiday",
+    "is_payday",
+    "is_navidad_season",
+    "is_buen_fin",
+    "is_semana_santa",
+    "days_to_payday",
+    "days_since_payday",
+    "days_to_holiday",
+    "days_since_holiday",
+    "days_to_christmas",
+    "buen_fin_day",
+    "days_to_buen_fin",
+    "days_since_buen_fin",
+    "lag_14d",
+    "lag_21d",
+    "lag_28d",
+    "lag_35d",
+    "same_dow_mean",
+    "roll_mean_7",
+    "roll_mean_28",
+    "roll_std_28",
+    "trend_ratio",
+    "has_promotion",
+    "promo_share_28",
+    "category",
+    "store_format",
+    "socioeconomic_level"
+  ],
+  "n_features": 30,
+  "hiperparametros": {
+    "objective": "regression",
+    "n_estimators": 400,
+    "learning_rate": 0.05,
+    "num_leaves": 31,
+    "min_child_samples": 100,
+    "subsample": 0.8,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 0.0,
+    "random_state": 0,
+    "verbose": -1,
+    "n_jobs": -1
+  },
+  "entrenado_hasta": "2024-02-29",
+  "capa_de_regimen": {
+    "descripcion": "reinicio de régimen tras Buen Fin y Navidad (src/models/regime.py); el factor es 1.0 fuera de esas ventanas",
+    "ventana_buen_fin_dias": [
+      -21,
+      20
+    ],
+    "ventana_navidad_referencia_dias": [
+      -17,
+      14
+    ],
+    "ventana_navidad_destino_dias": [
+      -17,
+      6
+    ],
+    "n_referencias_semanales": 16,
+    "k_rezagos_limpios": 4,
+    "minimo_validos": 2
+  },
+  "protocolo_validacion": {
+    "folds_desarrollo": [
+      "semana_santa_2023",
+      "may_jun_2023",
+      "sep_2023"
+    ],
+    "folds_confirmacion": [
+      "oct_2023",
+      "feb_2024"
+    ],
+    "regla_de_adopcion_pts_wape": 0.2,
+    "backtest_continuo": "48 semanas, 14 folds (scripts 09 y 10)"
+  },
+  "exclusiones": "replenishment_signal excluida por fuga de información (script 04); total_transactions no se pronostica (script 05)",
+  "semilla": 0
+}

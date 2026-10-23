@@ -1,0 +1,9 @@
+,sin capa,con capa
+sma4,23.0,20.6
+snaive (14 d),27.8,24.7
+ma28,22.2,20.1
+ETS por serie,38.3,36.5
+Ridge,35.3,33.1
+Random Forest,29.2,27.1
+XGBoost,24.6,22.4
+LightGBM (06),25.4,23.4

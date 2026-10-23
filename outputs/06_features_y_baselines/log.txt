@@ -1,0 +1,89 @@
+[06_features_y_baselines] inicio 2026-10-23 00:16:20
+horizonte 14 → base_lag 14 | rezagos estacionales [14, 21, 28, 35] | 30 features | 204,000 filas, elegibles 190,998
+                            n                                                                                                                          variables
+grupo                                                                                                                                                           
+Calendario                 16  day_of_week, day_of_month, is_weekend, is_official_holiday, is_payday, is_navidad_season, is_buen_fin, is_semana_santa, days_t...
+Historia del target (log)   9                             lag_14d, lag_21d, lag_28d, lag_35d, same_dow_mean, roll_mean_7, roll_mean_28, roll_std_28, trend_ratio
+Promoción                   2                                                                                                      has_promotion, promo_share_28
+Tienda / serie              3                                                                                        category, store_format, socioeconomic_level
+
+% de NaN (solo variables con nulos):
+lag_14d          3.310
+lag_21d          4.950
+lag_28d          6.600
+lag_35d          8.250
+same_dow_mean    4.940
+roll_mean_7      4.000
+roll_mean_28     6.350
+roll_std_28      6.350
+trend_ratio      6.350
+promo_share_28   6.350
+
+[fig_01.png]
+horizonte  7 (base_lag  7) · features que cambian antes de C + horizonte: ninguno ✓
+horizonte 14 (base_lag 14) · features que cambian antes de C + horizonte: ninguno ✓
+horizonte 28 (base_lag 28) · features que cambian antes de C + horizonte: ninguno ✓
+fuga deliberada (base_lag 7, horizonte 14) → ['lag_7d', 'same_dow_mean', 'roll_mean_7', 'roll_mean_28', 'roll_std_28', 'trend_ratio', 'base_snaive', 'base_sma4', 'base_ma28'] ← detectada
+             fold        tipo     inicio        fin duración
+semana_santa_2023     regular 2023-03-27 2023-04-23   4 sem.
+     may_jun_2023     regular 2023-05-29 2023-06-25   4 sem.
+         sep_2023     regular 2023-09-04 2023-10-01   4 sem.
+         oct_2023     regular 2023-10-02 2023-10-29   4 sem.
+    buen_fin_2023      evento 2023-11-06 2023-12-03   4 sem.
+     navidad_2023      evento 2023-12-11 2024-01-07   4 sem.
+post_navidad_2024 post_evento 2024-01-08 2024-02-11   5 sem.
+         feb_2024     regular 2024-02-12 2024-02-25   2 sem.
+
+WAPE % (tienda × categoría × semana) y sesgo %, horizonte 14:
+
+[tabla_01.csv]
+modelo                          ma28   sma4  snaive  ma28 (sesgo)  sma4 (sesgo)  snaive (sesgo)
+tipo        fold                                                                               
+evento      buen_fin_2023     33.400 31.500  40.200       -33.300       -28.900          -9.200
+            navidad_2023      25.500 29.200  36.800        -4.100        -3.600          -1.600
+post_evento post_navidad_2024 71.700 62.900  37.800        71.700        61.700          28.800
+regular     feb_2024           7.800  7.800   9.000        -4.300        -3.900          -3.100
+            may_jun_2023       8.200  8.100   8.900        -5.600        -5.400          -3.000
+            oct_2023           8.100  8.000   9.300         4.500         4.300           2.800
+            semana_santa_2023  8.700  8.700   9.700        -2.700        -2.400          -3.300
+            sep_2023           8.100  8.100   9.300         2.800         2.800           1.700
+Folds regulares:
+        WAPE % (media de folds regulares)  WAPE % mín  WAPE % máx  MAPE %  sesgo %
+modelo                                                                            
+ma28                                8.200       7.800       8.700   8.200   -1.000
+sma4                                8.200       7.800       8.700   8.100   -0.900
+snaive                              9.200       8.900       9.700   9.200   -1.000
+
+sma4 en folds regulares por nivel de agregación (WAPE %), para comparar con los pisos de ruido del notebook 02 (15.6 / 6.5 / 3.4 / 2.1):
+nivel
+serie × día       19.200
+serie × semana     8.200
+tienda × semana    5.400
+total × semana     4.800
+sma4 en folds regulares, WAPE % y sesgo % por segmento (tienda × categoría × semana):
+
+[tabla_02.csv]
+                               wape   bias
+segmento     valor                        
+category     Abarrotes        8.100 -0.600
+             Bebidas          8.200 -0.600
+             Cuidado_Personal 8.400 -0.800
+             Electronica      8.100 -0.400
+             Hogar            8.100 -0.500
+             Ropa             8.400 -0.300
+store_format Bodega           8.100 -0.400
+             Express          8.000 -0.400
+             Supercenter      8.300 -0.700
+region       Centro           8.200 -0.000
+             Norte            8.100 -0.700
+             Occidente        8.200 -0.700
+             Oriente          8.300 -0.400
+             Sur              8.200 -0.600
+
+[tabla_03.csv]
+       horizonte 14                     horizonte 28                    
+tipo         evento post_evento regular       evento post_evento regular
+modelo                                                                  
+ma28         29.400      71.700   8.200       36.200      89.500  13.600
+sma4         30.400      62.900   8.200       34.200      87.200  10.600
+snaive       38.500      37.800   9.200       38.100      79.900   9.900

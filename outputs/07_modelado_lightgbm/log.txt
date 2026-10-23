@@ -1,0 +1,155 @@
+[07_modelado_lightgbm] inicio 2026-10-23 00:16:29
+30 features | 190998 filas elegibles | desarrollo: ['semana_santa_2023', 'may_jun_2023', 'sep_2023'] | confirmación: ['oct_2023', 'feb_2024']
+WAPE % y sesgo % (tienda × categoría × semana, horizonte 14):
+
+[tabla_01.csv]
+modelo                         modelo  sma4  snaive  ma28  modelo (sesgo)  sma4 (sesgo)
+tipo        fold                                                                       
+evento      buen_fin_2023       34.50 31.50   40.20 33.40          -34.20        -28.90
+            navidad_2023        28.50 29.20   36.80 25.50           -8.60         -3.60
+post_evento post_navidad_2024   57.90 62.90   37.80 71.70           57.40         61.70
+regular     feb_2024             7.10  7.80    9.00  7.80           -1.40         -3.90
+            may_jun_2023         7.00  8.10    8.90  8.20           -1.40         -5.40
+            oct_2023             7.80  8.00    9.30  8.10            3.90          4.30
+            semana_santa_2023    7.60  8.70    9.70  8.70           -3.60         -2.40
+            sep_2023             8.20  8.10    9.30  8.10            3.00          2.80
+
+[tabla_02.csv]
+                     WAPE modelo  WAPE sma4  Δ pts  IC95 inf  IC95 sup  p (bootstrap)  semanas  semanas modelo mejor  p Wilcoxon
+regulares (5 folds)         7.59       8.19  -0.60     -1.11     -0.15           0.01    18.00                 11.00        0.04
+desarrollo                  7.60       8.30  -0.70     -1.37     -0.13           0.02    12.00                  7.00        0.13
+confirmación                7.55       7.95  -0.40     -0.98      0.24           0.21     6.00                  4.00        0.31
+eventos                    31.46      30.35   1.11     -3.02      3.25           0.51     8.00                  1.00        0.20
+post_evento                57.87      62.87  -5.00    -12.32      2.12           0.17     5.00                  3.00         NaN
+
+[tabla_03.csv]
+                                                                      WAPE desarrollo %  WAPE confirmación %  sesgo desarrollo %  Δ desarrollo (pts)  Δ confirmación (pts)    decisión
+base (30 features, objetivo L2 en log)                                             7.60                 7.42               -0.70                0.00                  0.00  referencia
++ month y week_of_year                                                             7.46                 7.18                0.04               -0.14                 -0.24  no adoptar
++ atributos de tienda (región, m², cajas, farmacia, gasolinera, año)               7.64                 7.38               -0.85                0.04                 -0.04  no adoptar
++ rezagos limpios que excluyen días de evento                                      7.76                 8.36               -0.76                0.16                  0.94  no adoptar
+− promoción (has_promotion, promo_share_28)                                        7.59                 7.39               -0.69               -0.01                 -0.03  no adoptar
+− distancias de calendario (solo banderas)                                         7.74                 7.58               -0.40                0.14                  0.16  no adoptar
+− variables de Buen Fin y Navidad                                                  7.75                 8.45               -0.32                0.15                  1.03  no adoptar
+objetivo L1 en log (mediana)                                                       7.67                 7.50                0.13                0.07                  0.08  no adoptar
+objetivo Huber en log                                                              7.60                 7.41               -0.69               -0.00                 -0.01  no adoptar
+
+[tabla_04.csv]
+                   base (30 features, objetivo L2 en log)  + month y week_of_year  + rezagos limpios que excluyen días de evento  − variables de Buen Fin y Navidad  sma4 (referencia)
+fold                                                                                                                                                                                  
+buen_fin_2023                                       34.50                   35.80                                          36.70                              31.90              31.50
+navidad_2023                                        28.50                   24.50                                          35.90                              31.60              29.20
+post_navidad_2024                                   57.90                   56.10                                          50.80                              58.80              62.90
+Referencia (num_leaves=31, min_child=100, lr=0.05, n=400): desarrollo 7.60 | confirmación 7.42
+
+[tabla_05.csv]
+   num_leaves  min_child_samples  learning_rate  n_estimators  WAPE desarrollo %  WAPE confirmación %  sesgo desarrollo %
+5          31                 50           0.03           300               7.56                 7.46               -0.72
+9          63                 50           0.03           300               7.58                 7.43               -0.67
+4          31                 50           0.05           400               7.61                 7.46               -0.67
+1          15                 50           0.03           300               7.62                 7.51               -0.87
+0          15                 50           0.05           400               7.63                 7.42               -0.90
+7          31                200           0.03           300               7.63                 7.37               -0.95
+Mejor configuración de la rejilla mejora desarrollo en 0.04 pts → < 0.2 pts: se conserva la referencia
+Folds regulares (media de folds):
+        WAPE %  MAPE %  sesgo %  MAE (MXN, serie-semana)
+modelo                                                  
+modelo    7.53    7.47     0.08                82,974.43
+sma4      8.15    8.11    -0.93                89,705.20
+snaive    9.23    9.19    -0.98               101,524.13
+ma28      8.21    8.17    -1.05                90,292.38
+
+Por nivel de agregación (folds regulares), contra el piso de ruido del notebook 02:
+                    WAPE modelo %  WAPE sma4 %  piso de ruido %
+serie × día                 16.90        19.30            15.60
+serie × semana               7.60         8.20             6.50
+tienda × semana              4.30         5.50             3.40
+categoría × semana           3.20         4.90             2.10
+total × semana               3.20         4.90             2.10
+
+R² serie × día: 0.868 | R² serie × semana: 0.966 (R² inflado por la diferencia de escala entre series; no es la métrica de decisión)
+WAPE % y sesgo % por segmento, folds regulares (tienda × categoría × semana):
+
+[tabla_06.csv]
+                               wape  bias  wape_sma4  mejora_pts
+segmento     valor                                              
+category     Abarrotes         7.73 -0.09       8.12       -0.38
+             Bebidas           7.57  0.59       8.19       -0.63
+             Cuidado_Personal  7.62 -0.02       8.43       -0.81
+             Electronica       7.49  0.77       8.06       -0.57
+             Hogar             7.39  0.43       8.07       -0.68
+             Ropa              7.67  0.63       8.39       -0.73
+store_format Bodega            7.44  0.69       8.11       -0.67
+             Express           7.32  0.45       8.03       -0.71
+             Supercenter       7.85 -0.02       8.33       -0.48
+region       Centro            7.51  0.81       8.20       -0.69
+             Norte             7.51 -0.16       8.11       -0.60
+             Occidente         7.64 -0.15       8.18       -0.54
+             Oriente           7.69  0.94       8.29       -0.60
+             Sur               7.55  0.70       8.15       -0.61
+
+[fig_01.png]
+
+[tabla_07.csv]
+       semana         kind                y           pred             sma4
+0  2023-03-27      regular   506,984,711.43 490,722,904.48   475,971,294.30
+1  2023-04-03      regular   437,861,825.59 432,803,793.70   477,837,717.35
+2  2023-04-10      regular   522,855,631.64 483,633,327.87   483,233,848.40
+3  2023-04-17      regular   489,185,922.69 478,525,278.87   473,040,582.41
+4  2023-05-29      regular   544,336,233.08 536,291,528.93   509,835,895.37
+5  2023-06-05      regular   539,508,393.78 529,081,403.32   508,241,970.87
+6  2023-06-12      regular   563,191,453.05 556,595,566.22   523,459,842.43
+7  2023-06-19      regular   543,032,987.80 536,930,428.61   531,055,002.99
+8  2023-09-04      regular   541,603,673.74 590,901,946.42   587,749,516.98
+9  2023-09-11      regular   592,754,145.22 575,766,232.53   584,628,550.17
+10 2023-09-18      regular   543,938,158.62 562,624,410.82   575,603,407.56
+11 2023-09-25      regular   580,310,417.88 596,435,331.13   573,980,299.31
+12 2023-10-02      regular   527,816,281.55 563,636,737.81   565,406,745.67
+13 2023-10-09      regular   562,675,426.40 585,499,204.58   564,651,598.87
+14 2023-10-16      regular   531,009,336.30 548,035,525.01   561,204,750.82
+15 2023-10-23      regular   531,871,799.70 540,071,081.77   553,685,071.11
+16 2023-11-06       evento   676,013,210.67 505,843,090.61   538,343,210.99
+17 2023-11-13       evento 1,336,104,497.52 552,865,878.44   582,987,094.95
+18 2023-11-20       evento   782,797,607.29 589,012,506.10   611,321,541.02
+19 2023-11-27       evento   783,197,016.95 706,806,501.97   812,595,331.33
+20 2023-12-11       evento   927,147,909.33 871,059,884.41   894,528,083.11
+21 2023-12-18       evento 1,106,152,867.17 884,737,654.34   930,289,363.30
+22 2023-12-25       evento 1,201,735,996.74 814,052,084.72   828,050,216.25
+23 2024-01-01       evento   460,373,675.75 807,518,193.78   908,889,031.22
+24 2024-01-08  post_evento   471,101,771.84 942,947,272.85 1,013,523,776.17
+25 2024-01-15  post_evento   485,531,405.55 890,422,708.79   923,852,612.25
+26 2024-01-22  post_evento   466,647,951.60 751,682,992.17   809,841,077.88
+27 2024-01-29  post_evento   504,573,906.42 684,983,162.78   654,685,712.47
+28 2024-02-05  post_evento   467,068,375.32 500,291,532.31   470,913,701.19
+29 2024-02-12      regular   512,385,130.73 503,875,958.45   481,044,721.23
+30 2024-02-19      regular   488,022,879.58 482,510,646.42   479,879,132.54
+Nivel tienda × categoría × día (piso de ruido de las unidades ≈ 21.8 %):
+
+[tabla_08.csv]
+                   WAPE unidades modelo %  WAPE unidades sma4 %  sesgo modelo %
+fold                                                                           
+semana_santa_2023                   24.30                 26.40           -2.80
+may_jun_2023                        23.50                 25.00           -1.70
+sep_2023                            24.90                 25.90            2.80
+oct_2023                            24.00                 25.80            3.20
+feb_2024                            23.20                 24.70           -1.40
+Aditividad (SHAP + valor base = predicción en log), error máx.: 4.618527782440651e-14
+
+[fig_02.png]
+
+[tabla_09.csv]
+                     % de la importancia total
+same_dow_mean                            29.20
+roll_mean_28                             12.20
+day_of_week                              10.70
+roll_mean_7                               9.60
+lag_14d                                   6.90
+days_since_buen_fin                       3.90
+roll_std_28                               3.60
+is_payday                                 2.90
+store_format                              2.30
+days_to_buen_fin                          2.30
+days_to_christmas                         2.10
+is_weekend                                1.60
+
+[fig_03.png]

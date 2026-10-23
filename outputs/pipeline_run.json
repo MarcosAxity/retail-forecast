@@ -1,0 +1,84 @@
+{
+  "ultima_corrida": "2026-10-23 00:19:31",
+  "python": "3.12.15",
+  "pasos": [
+    {
+      "id": "00",
+      "script": "scripts/00_preparar_datos.py",
+      "estado": "ok",
+      "segundos": 2.1
+    },
+    {
+      "id": "01",
+      "script": "scripts/01_eda_calidad_y_dinamica.py",
+      "estado": "ok",
+      "segundos": 1.3
+    },
+    {
+      "id": "02",
+      "script": "scripts/02_eda_nulos_consistencias_calendario.py",
+      "estado": "ok",
+      "segundos": 1.0
+    },
+    {
+      "id": "03",
+      "script": "scripts/03_eda_tiendas_promocion_ruido.py",
+      "estado": "ok",
+      "segundos": 4.4
+    },
+    {
+      "id": "04",
+      "script": "scripts/04_auditoria_replenishment.py",
+      "estado": "ok",
+      "segundos": 11.6
+    },
+    {
+      "id": "05",
+      "script": "scripts/05_definicion_target.py",
+      "estado": "ok",
+      "segundos": 6.6
+    },
+    {
+      "id": "06",
+      "script": "scripts/06_features_y_baselines.py",
+      "estado": "ok",
+      "segundos": 6.4
+    },
+    {
+      "id": "07",
+      "script": "scripts/07_modelado_lightgbm.py",
+      "estado": "ok",
+      "segundos": 100.9
+    },
+    {
+      "id": "08",
+      "script": "scripts/08_backtest_oficial_y_modelo_final.py",
+      "estado": "ok",
+      "segundos": 8.6
+    },
+    {
+      "id": "09",
+      "script": "scripts/09_modelado_eventos.py",
+      "estado": "ok",
+      "segundos": 25.4
+    },
+    {
+      "id": "10",
+      "script": "scripts/10_comparacion_modelos.py",
+      "estado": "ok",
+      "segundos": 12.3
+    },
+    {
+      "id": "11",
+      "script": "scripts/11_uplift_promocional.py",
+      "estado": "ok",
+      "segundos": 31.8
+    },
+    {
+      "id": "12",
+      "script": "scripts/12_exportar_artifacts.py",
+      "estado": "ok",
+      "segundos": 0.8
+    }
+  ]
+}

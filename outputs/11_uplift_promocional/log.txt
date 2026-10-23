@@ -1,0 +1,141 @@
+[11_uplift_promocional] inicio 2026-10-23 00:18:59
+203,958 filas observadas | 480 series | 80 tiendas | 2023-01-01 → 2024-02-29 | promoción en 19.98% de las filas
+
+## 1. Efecto promedio de la promoción sobre amount_total
+
+[tabla_01.csv] Efecto de la promoción sobre amount_total (% vs. día sin promoción)
+                                                                      n  efecto %  IC95 inf %  IC95 sup %     p
+sin controles (diferencia de medias, log)                           NaN    -0.066         NaN         NaN   NaN
+FE serie + fecha                                            203,958.000    -0.250      -0.462      -0.036 0.022
+FE (serie × día de la semana) + fecha                       203,958.000    -0.254      -0.466      -0.041 0.019
+FE serie + fecha · solo días normales                       183,798.000    -0.242      -0.477      -0.006 0.044
+FE serie + fecha · en MXN (efecto como % de la venta media) 203,958.000    -0.278      -0.740       0.184 0.239
+
+## 2. Aleatorización, equivalencia y potencia
+
+[fig_01.png] Distribución nula del efecto bajo reasignación aleatoria de la promoción
+
+[tabla_02.csv] Equivalencia con cero (TOST) para distintos márgenes
+       p (TOST) ¿equivalente a 0?
+±0.5 %    0.011                sí
+±1.0 %    0.000                sí
+±2.0 %    0.000                sí
+p de aleatorización = 0.024 | efecto mínimo detectable (80 % de potencia) = ±0.31 % de la venta diaria de la serie
+
+## 3. Resultados alternos
+
+[tabla_03.csv] Efecto de la promoción por variable de resultado
+                                                     n  efecto %  IC95 inf %  IC95 sup %     p
+amount_total (monto)                       203,958.000    -0.250      -0.462      -0.036 0.022
+units_sold (unidades)                      197,840.000     0.047      -0.245       0.340 0.751
+efectivo + tarjeta (transacciones pagadas) 191,835.000    -0.142      -0.297       0.013 0.072
+avg_ticket (ticket)                        199,084.000    -0.131      -0.264       0.002 0.054
+total_transactions (artefacto)             203,958.000    21.869      21.680      22.057 0.000
+Lectura: total_transactions sube +21.9 %, pero ese conteo se infla solo con promoción (scripts 01 y 02) y no mide demanda real. En las variables que sí reflejan demanda el efecto está entre -0.25 % y +0.05 % (límites de IC95: -0.46 % a +0.34 %).
+
+## 4. Heterogeneidad del efecto
+
+[tabla_04.csv] Efecto por subgrupo (error agrupado por tienda; p ajustado por Benjamini-Hochberg)
+                                             n  efecto %  IC95 inf %  IC95 sup %      z     p  p ajustado (BH)
+dimensión           nivel                                                                                     
+category            Abarrotes            33993    -0.209      -0.766       0.351 -0.734 0.463            0.693
+                    Bebidas              33993    -0.079      -0.565       0.411 -0.316 0.752            0.823
+                    Cuidado_Personal     33993    -0.165      -0.686       0.359 -0.618 0.536            0.693
+                    Electronica          33993    -0.740      -1.192      -0.285 -3.186 0.001            0.051
+                    Hogar                33993    -0.250      -0.781       0.284 -0.919 0.358            0.626
+                    Ropa                 33993    -0.053      -0.543       0.439 -0.212 0.832            0.832
+store_format        Bodega               89220    -0.241      -0.534       0.052 -1.614 0.107            0.373
+                    Express              63738    -0.054      -0.444       0.337 -0.272 0.785            0.832
+                    Supercenter          51000    -0.506      -0.976      -0.035 -2.104 0.035            0.197
+region              Centro               30588    -0.198      -0.836       0.444 -0.606 0.545            0.693
+                    Norte                43332    -0.453      -0.881      -0.023 -2.064 0.039            0.197
+                    Occidente            51000    -0.259      -0.662       0.145 -1.256 0.209            0.456
+                    Oriente              45900    -0.324      -0.778       0.133 -1.390 0.164            0.384
+                    Sur                  33138     0.092      -0.468       0.654  0.320 0.749            0.823
+socioeconomic_level C                    68832    -0.419      -0.820      -0.017 -2.044 0.041            0.197
+                    C+                   68838    -0.180      -0.563       0.204 -0.921 0.357            0.626
+                    B                    53538    -0.268      -0.626       0.091 -1.466 0.143            0.384
+                    A/B                  12750     0.377      -0.137       0.894  1.436 0.151            0.384
+evento              Buen Fin              1920     1.399      -0.835       3.684  1.222 0.222            0.456
+                    Semana Santa           960    -1.260      -4.268       1.843 -0.803 0.422            0.675
+                    día normal          183798    -0.240      -0.475      -0.005 -2.004 0.045            0.197
+                    festivo               3360     0.471      -1.084       2.051  0.591 0.555            0.693
+                    temporada navideña   13920    -0.710      -1.466       0.052 -1.827 0.068            0.263
+pago_quincena       otro día            190518    -0.254      -0.476      -0.031 -2.234 0.025            0.197
+                    quincena             13440    -0.188      -0.991       0.621 -0.457 0.648            0.756
+fin_semana          entre semana        145884    -0.295      -0.529      -0.060 -2.462 0.014            0.161
+                    fin de semana        58074    -0.136      -0.552       0.281 -0.640 0.522            0.693
+nivel_venta         bajo                 68408    -0.127      -0.509       0.256 -0.649 0.516            0.693
+                    medio                67980    -0.105      -0.516       0.308 -0.499 0.618            0.746
+                    alto                 67570    -0.521      -0.862      -0.178 -2.973 0.003            0.052
+trimestre           2023Q1               43176    -0.250      -0.723       0.226 -1.031 0.303            0.589
+                    2023Q2               43680    -0.180      -0.622       0.263 -0.799 0.424            0.675
+                    2023Q3               44160    -0.345      -0.820       0.133 -1.416 0.157            0.384
+                    2023Q4               44160    -0.339      -0.803       0.128 -1.425 0.154            0.384
+                    2024Q1               28782    -0.069      -0.659       0.525 -0.228 0.820            0.832
+Subgrupos evaluados: 35 | p < 0.05 sin ajustar: 8 (esperados por azar ≈ 1.8) | significativos tras BH: 0
+
+[fig_02.png] Forest plot de subgrupos
+Heterogeneidad entre las 80 tiendas: estadístico Q = 3.02 | mediana bajo el azar = 3.14 | p (permutación) = 0.60
+
+[fig_03.png] Efecto por tienda
+
+## 5. Adelantos y rezagos de la promoción
+
+[tabla_05.csv] Efecto sobre la venta de t de una promoción en t+k (k<0: promoción pasada · k=0: mismo día · k>0: promoción futura)
+    efecto %  IC95 inf %  IC95 sup %
+k                                   
+-7     0.158      -0.044       0.360
+-6    -0.125      -0.349       0.100
+-5    -0.057      -0.265       0.152
+-4     0.022      -0.208       0.253
+-3    -0.128      -0.360       0.105
+-2    -0.005      -0.197       0.188
+-1    -0.097      -0.345       0.152
+0     -0.283      -0.499      -0.067
+1     -0.144      -0.375       0.088
+2      0.118      -0.135       0.373
+3      0.277       0.084       0.470
+4     -0.154      -0.365       0.057
+5      0.132      -0.063       0.327
+6     -0.015      -0.217       0.187
+7     -0.001      -0.225       0.223
+
+[fig_04.png] Event study
+Efecto acumulado de una promoción (suma de t-7…t+7): -0.30 % (IC95 [-1.20, +0.60] %) | p = 0.51
+Suma de efectos · anticipación (promoción en t+1…t+7): +0.21 % (IC95 [-0.42, +0.85] %) | p = 0.51
+Suma de efectos · canibalización/arrastre (promoción en t-7…t-1): -0.23 % (IC95 [-0.83, +0.37] %) | p = 0.45
+
+## 6. Promociones consecutivas (fatiga o refuerzo)
+
+[tabla_06.csv] Efecto según días consecutivos con promoción
+                       filas  efecto %  IC95 inf %  IC95 sup %     p
+1.er día de promoción  32468    -0.225      -0.459       0.010 0.060
+2.º día consecutivo     6420    -0.404      -0.958       0.154 0.155
+3.er día o más          1691    -0.128      -1.089       0.842 0.795
+
+## 7. Traducción a negocio
+
+[tabla_07.csv] Venta incremental atribuible a las promociones (periodo completo)
+                                       efecto %  venta incremental por serie-día con promoción (MXN)  venta incremental total de las promociones del periodo (MXN)
+escenario                                                                                                                                                         
+cota inferior (IC95 más amplio)          -0.740                                           -1,262.550                                               -51,844,106.491
+estimación puntual (FE serie + fecha)    -0.250                                             -425.679                                               -17,393,675.510
+cota superior (IC95 más amplio)           0.184                                              314.383                                                12,790,387.260
+
+[tabla_08.csv] Punto de equilibrio: si el costo de una promoción (descuento + operación) por serie-día supera esta cifra, no se paga sola
+                      utilidad bruta máx. recuperable por promoción (MXN, con la cota superior del efecto)  como % de la venta del día
+margen bruto asumido                                                                                                                  
+15%                                                                                                 47.157                       0.028
+25%                                                                                                 78.596                       0.046
+35%                                                                                                110.034                       0.065
+Venta diaria media por serie: 170,581 MXN | días-serie con promoción: 40,745 (20.0%) | venta bajo promoción: 6,952.7 M MXN
+Supuestos: el dataset no trae costos ni descuentos de la promoción ni márgenes; los márgenes de la tabla son escenarios ilustrativos.
+
+## 8. Conclusiones
+1. Efecto promedio sobre la venta: -0.25 % (IC95 [-0.46, -0.04] %); es ligeramente negativo y su IC95 excluye el cero, pero la magnitud es económicamente irrelevante. p de aleatorización = 0.024; en especificación en niveles (MXN) p = 0.24. Cotas más amplias entre especificaciones: [-0.74, +0.18] %.
+2. Precisión: efecto mínimo detectable (80 % de potencia) = ±0.31 %. Equivalente a cero (TOST) con márgenes de ±0.5 %, ±1.0 %, ±2.0 %. No hay evidencia de un uplift positivo.
+3. Heterogeneidad: 8 de 35 subgrupos con p < 0.05 sin ajustar (≈ 1.8 esperados por azar) y 0 tras Benjamini-Hochberg; dispersión entre tiendas compatible con el azar (p = 0.60). Candidatos a vigilar (BH < 0.10, hipótesis y no conclusión): category=Electronica (-0.74 %); nivel_venta=alto (-0.52 %).
+4. Dinámica: efecto acumulado en ±7 días -0.30 % (IC95 [-1.20, +0.60] %), sin patrón de anticipación ni canibalización consistente en el event study.
+5. total_transactions sube +21.9 % con promoción pero es un artefacto de medición (script 02); la demanda real (monto, unidades, transacciones pagadas, ticket) no sube.
+6. Implicación: con estos datos las promociones no generan venta incremental medible. Antes de escalarlas conviene (a) conocer su costo real y margen, (b) probar con grupos de control planeados (holdout) por categoría o tienda.

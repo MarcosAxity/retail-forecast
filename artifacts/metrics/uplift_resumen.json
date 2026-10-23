@@ -1,0 +1,25 @@
+{
+  "efecto_amount_total_pct": {
+    "efecto %": -0.24954589140174294,
+    "IC95 inf %": -0.46249919914746074,
+    "IC95 sup %": -0.03613698540496422,
+    "p": 0.021935859432045627,
+    "n": 203958.0
+  },
+  "p_aleatorizacion": 0.023976023976023976,
+  "mde_pct": 0.30577261904472447,
+  "tost": {
+    "±0.5 %": 0.01122521525891402,
+    "±1.0 %": 4.126209290935557e-12,
+    "±2.0 %": 5.131744551850936e-57
+  },
+  "efecto_total_transactions_pct": 21.868680952834943,
+  "subgrupos": {
+    "evaluados": 35,
+    "p<0.05_sin_ajustar": 8,
+    "significativos_BH": 0
+  },
+  "heterogeneidad_tiendas_p": 0.5970149253731343,
+  "efecto_acumulado_pct": -0.30289304886780277,
+  "venta_diaria_media_mxn": 170581.25788373096
+}

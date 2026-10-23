@@ -1,0 +1,15 @@
+[12_exportar_artifacts] inicio 2026-10-23 00:19:31
+Prueba de humo: modelo recargado, 1000 predicciones finitas y positivas (mediana 74,337 MXN).
+
+Artifacts exportados en artifacts/ (11 archivos + manifest.json):
+  model/lgbm_h14.joblib                                                   1,245,818 B  paso 08
+  model/model_spec.json                                                       2,198 B  paso 12
+  model/feature_importance.csv                                                1,695 B  paso 12
+  metrics/backtest_metrics_h14.csv                                            3,556 B  paso 08
+  metrics/baselines_h14.csv                                                  12,014 B  paso 00
+  metrics/uplift_resumen.json                                                   711 B  paso 11
+  metrics/comparacion_regulares.csv                                             455 B  paso 10
+  metrics/comparacion_eventos.csv                                               193 B  paso 10
+  metrics/significancia_vs_competidores.csv                                     704 B  paso 10
+  environment/versions.txt                                                      272 B  paso 12
+  environment/data_fingerprint.json                                             378 B  paso 12

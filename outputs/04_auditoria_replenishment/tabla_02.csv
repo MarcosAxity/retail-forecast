@@ -1,0 +1,9 @@
+,columna,días_pasados,días_futuros,largo_ventana,filas_comparadas,coincide %
+0,total_transactions,5,1,7,200970,99.76
+1,efectivo+tarjeta,5,1,7,130614,21.0
+2,total_transactions,6,0,7,200970,0.5
+3,total_transactions,4,2,7,200970,0.5
+4,total_transactions,3,3,7,200970,0.3
+5,total_transactions,4,1,6,201468,0.29
+6,efectivo+tarjeta,4,2,7,130614,0.29
+7,total_transactions,5,0,6,201468,0.28

@@ -1,0 +1,71 @@
+{
+  "generado": "2026-10-23 00:19:31",
+  "archivos": {
+    "model/lgbm_h14.joblib": {
+      "sha256": "af19abfd9720f229b2b0231eb98cb94ac07431340ec2c832ebed3c34564f51fe",
+      "bytes": 1245818,
+      "paso": "08",
+      "descripcion": "Modelo final LightGBM + metadatos (columnas, parámetros, fecha de corte de entrenamiento)"
+    },
+    "model/model_spec.json": {
+      "sha256": "09df2b820ea015a585510d15feed6e97c4f17afd9a49ab090d2cd4ac1a32d207",
+      "bytes": 2198,
+      "paso": "12",
+      "descripcion": "Especificación completa del modelo y de la capa de régimen"
+    },
+    "model/feature_importance.csv": {
+      "sha256": "794ff4d8fcaa2d19f613d9089086a44c298eda5f6ec0d7cf652f2dd49619465c",
+      "bytes": 1695,
+      "paso": "12",
+      "descripcion": "Importancia por ganancia (complementa SHAP del paso 07)"
+    },
+    "metrics/backtest_metrics_h14.csv": {
+      "sha256": "ca1da42c9635ad2b0ba9d202d95a98dda8592b0eac30aaa7eb91b0e1f93eb197",
+      "bytes": 3556,
+      "paso": "08",
+      "descripcion": "WAPE/MAPE/sesgo por fold y modelo (backtest oficial)"
+    },
+    "metrics/baselines_h14.csv": {
+      "sha256": "68ed7df2a1e8565048dde4df50d78930cb301e0e20f6414bd223ac41593a0df0",
+      "bytes": 12014,
+      "paso": "00",
+      "descripcion": "Baselines por fold y nivel de agregación"
+    },
+    "metrics/uplift_resumen.json": {
+      "sha256": "e3dad0042586d3475acadfc61ae78133c0b10747472d7bb4c62d5c7a4bf103eb",
+      "bytes": 711,
+      "paso": "11",
+      "descripcion": "Resumen del análisis de uplift promocional"
+    },
+    "metrics/comparacion_regulares.csv": {
+      "sha256": "11d84e9d1617620cfade8430d10cd479629a6a93df68b522a40f9eaa8a4d2409",
+      "bytes": 455,
+      "paso": "10",
+      "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_regulares.csv)"
+    },
+    "metrics/comparacion_eventos.csv": {
+      "sha256": "74a10bed772a9812bb95d205b1414b38f56e274a94e62392b5351bebfcadb662",
+      "bytes": 193,
+      "paso": "10",
+      "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/comparacion_eventos.csv)"
+    },
+    "metrics/significancia_vs_competidores.csv": {
+      "sha256": "36004a78bb4ee69fe4690bd8eb45d3f4be444fe3da3f91fc00178deb7131f02f",
+      "bytes": 704,
+      "paso": "10",
+      "descripcion": "Resultado de la competencia de modelos (outputs/10_comparacion_modelos/significancia_vs_competidores.csv)"
+    },
+    "environment/versions.txt": {
+      "sha256": "dd64e22662c8ad84457a204ad3f08a8ac6a18c04e12dfb61d4ee4fb460e61058",
+      "bytes": 272,
+      "paso": "12",
+      "descripcion": "Versiones usadas (el entorno exacto está bloqueado en uv.lock)"
+    },
+    "environment/data_fingerprint.json": {
+      "sha256": "14ce869a57ce32df217444c606706ac16bb6b68907526c87fda365ac1719b27e",
+      "bytes": 378,
+      "paso": "12",
+      "descripcion": "Huella de los datos de entrada"
+    }
+  }
+}
