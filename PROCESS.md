@@ -21,7 +21,7 @@ criterios K1/K2 de la propuesta final. Los resultados que no cumplen un criterio
 
 ## Herramientas
 
-- **Claude (Anthropic)**, en conversaciones de un proyecto de claude.ai y en una sesión de agente con acceso al repositorio. Se usó como asistente para:
+- **Claude, Polux One y Polux Code**, en conversaciones de un proyecto de ML y en una sesión de agente con acceso al repositorio. Se usó como asistente para:
   planear fases, redactar y refactorizar código, proponer pruebas estadísticas, revisar resultados, migrar los notebooks a scripts y redactar documentación.
 - **Python 3.12 · `uv`** (entorno bloqueado en `uv.lock`), pandas, NumPy, SciPy, statsmodels, scikit-learn, LightGBM, XGBoost, SHAP, matplotlib, pytest, ruff; **Streamlit y Plotly** para el dashboard y, solo de forma opcional, el SDK de Anthropic para el chat con Claude.
 - **Git** para el historial de fases.

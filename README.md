@@ -67,7 +67,7 @@ Un tablero en [Streamlit](https://streamlit.io) que muestra el modelo entrenado,
 - Nada más: sin GPU, sin llaves de API, sin datos externos, sin correr el pipeline. Después de instalar las dependencias funciona sin conexión.
 
 ```bash
-git clone <este repositorio> && cd retail-forecast
+git clone https://github.com/MarcosAxity/retail-forecast.git && cd retail-forecast
 uv sync                              # entorno exacto desde uv.lock
 uv run streamlit run app.py          # abre http://localhost:8501
 ```
