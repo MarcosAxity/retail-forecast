@@ -262,6 +262,40 @@ Un cambio al modelo se adopta solo si mejora ≥ 0.2 pt de WAPE en desarrollo. L
 **Dónde verlo.** Cifras globales y por fold: pestaña **Modelo** del dashboard y `artifacts/metrics/`. Argumentación completa y pruebas empíricas: `scripts/10_comparacion_modelos.py`
 (secciones 6.1–6.3) y `outputs/10_comparacion_modelos/log.txt`. Origen de la meta y del piso de ruido: `docs/EDA.md`, sección «Implicaciones para las métricas».
 
+### Selección de variables
+
+El modelo final usa **30 variables** (lista en `artifacts/model/model_spec.json`). No salen de un método automático (RFE, Boruta o selección por importancia), sino de tres capas de decisión
+con una regla fijada antes de mirar resultados.
+
+**1 · Se decide por diseño qué puede entrar (scripts 04 a 06).**
+- **Se excluye `replenishment_signal`** por fuga de información: coincide al 99.76 % con un promedio que incluye el día a pronosticar.
+- **No se usan `month`, `quarter`, `week_of_year` ni `store_id`:** con 14 meses de datos cada valor aparece una o dos veces y el modelo los usaría como índice de tiempo en lugar de aprender el patrón.
+- **De los atributos de tienda solo entran formato y nivel socioeconómico;** el nivel propio de cada tienda ya lo capturan sus rezagos.
+- **Todo lo derivado de la demanda usa información con al menos 14 días de antigüedad** (el horizonte), y `tests/test_features.py` lo comprueba perturbando el futuro.
+
+**2 · Se prueba por ablación qué se agrega o se quita (script 07, sección 2).** Cada variante se compara contra la base de 30 variables y **se adopta solo si mejora el WAPE de desarrollo al menos 0.2 puntos**.
+La columna de confirmación son folds que no se usaron para decidir.
+
+| Variante | Δ WAPE desarrollo (pts) | Δ WAPE confirmación (pts) | Decisión |
+|---|---|---|---|
+| + `month` y `week_of_year` | −0.14 | −0.24 | No adoptar (bajo el umbral y funcionaría como índice temporal) |
+| + atributos extra de tienda (región, m², cajas, farmacia, gasolinera, año) | +0.04 | −0.04 | No adoptar |
+| − promoción (`has_promotion`, `promo_share_28`) | −0.01 | −0.03 | No adoptar: no aporta y es coherente con el uplift ≈ 0 |
+| − distancias de calendario (solo banderas) | +0.14 | +0.16 | No adoptar: quitarlas empeora |
+| − variables de Buen Fin y Navidad | +0.15 | +1.03 | No adoptar: quitarlas empeora, sobre todo en confirmación |
+| + rezagos que excluyen días de evento | +0.16 | +0.94 | No adoptar: empeora |
+| Objetivo L1 en log (mediana) | +0.07 | +0.08 | No adoptar |
+| Objetivo Huber en log | 0.00 | −0.01 | No adoptar |
+
+Ninguna variante superó el umbral, por lo que el modelo de referencia se queda con sus 30 variables. Un valor positivo significa que el error sube.
+
+**3 · El propio modelo atenúa lo poco útil.** LightGBM usa `colsample_bytree = 0.8`, `subsample = 0.8` y `min_child_samples = 100`, que reducen el peso de variables redundantes (los rezagos y los promedios móviles están muy correlacionados).
+La importancia por ganancia y por SHAP está en la pestaña **Modelo**: `same_dow_mean` aporta 55 % y `lag_14d` 21 %.
+
+**Qué no se hizo y por qué.** No se aplicó selección automática: con 30 variables, un árbol que ya ignora las inútiles y mejoras máximas de 0.14 pts en las ablaciones, el beneficio esperado es menor que el riesgo de sobreajustar
+la selección a 14 folds. Una cautela abierta: las variables de distancia a Buen Fin y Navidad suman ≈ 8 % de importancia SHAP y, como cada evento aparece una sola vez en el entrenamiento,
+podrían estar memorizando esa única ocurrencia (misma limitación que la primera viñeta de «Limitaciones»).
+
 ### Decisiones metodológicas
 
 #### Por qué WAPE y no MAPE (con ejemplos)
