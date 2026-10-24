@@ -236,12 +236,104 @@ docs/            EDA.md e imágenes           notebooks/        versión explora
 Correspondencia notebook → script: `01_eda` → 01 · `02_eda_complementario` → 02 y 03 · `03_auditoria_replenishment_signal` → 04 ·
 `04_definicion_del_target` → 05 · `05_features_y_baselines` → 06 · `06_modelado` → 07 · `06b_modelado_eventos` → 09 · `07_comparacion_modelos` → 10.
 
+### Métricas
+
+Todas las métricas se calculan **sobre el backtest walk-forward** (el modelo predice periodos que no vio al entrenar) y solo con filas que tienen venta real y pronóstico.
+La definición vive en `src/models/evaluate.py`; el nivel de agregación, en `src/models/backtest.py`.
+
+| Métrica | Fórmula | Cómo leerla | Papel en el proyecto |
+|---|---|---|---|
+| **WAPE** | Σ\|y − ŷ\| / Σy | «De cada 100 pesos de venta real, cuántos se planearon mal». 7.3 % = el pronóstico se desvía 7.3 % de la venta | **Métrica principal** (criterios K1/K2, competencia de modelos, dashboard) |
+| **Sesgo** | Σ(ŷ − y) / Σy | Positivo: sobrepronóstico (exceso de inventario). Negativo: subpronóstico (riesgo de faltante) | **Siempre al lado del WAPE**: el WAPE no dice en qué dirección se falla |
+| **MAE** | media de \|y − ŷ\| | Error medio en MXN | Apoyo: da la escala monetaria; no es comparable entre niveles de agregación |
+| **MAPE** | media de \|y − ŷ\| / y | Error porcentual promedio, fila por fila | **Solo secundaria** y para contrastar con WAPE (ver «Por qué WAPE y no MAPE») |
+| **WAPE asimétrico** | Σ(2·faltante + sobrante) / Σy | WAPE donde quedarse corto pesa el doble | Prueba de robustez: no hay costos reales de negocio, así que no se usa para ajustar el modelo |
+| **Piso de ruido** | WAPE mínimo alcanzable dado el ruido irreducible de las ventas (paso 03) | El mejor WAPE que cualquier modelo podría lograr | Techo de lo exigible: ≈ 6.5 % a serie × semana, ≈ 15.6 % a serie × día |
+| **Habilidad vs `sma4`** | WAPE del modelo − WAPE del promedio móvil de 4 semanas (en puntos) | Cuántos puntos mejora el modelo al baseline simple | El listón real a superar |
+
+**Nivel de agregación.** El error se mide sumando primero y comparando después. La unidad de decisión (la reposición semanal) es **tienda × categoría × semana**
+(`serie × semana`): se suman 7 días de venta real y de pronóstico de cada serie y sobre esas sumas se calcula el error. Solo cuentan semanas completas (7 días).
+También se reporta por tienda × semana, categoría × semana y total × semana; mientras más se agrega, más se cancela el ruido y menor es el error.
+A nivel diario (serie × día) el piso de ruido ya es ≈ 15.6 %, por eso no se usa para evaluar.
+
+**Validación.** Folds fijados antes de mirar resultados: desarrollo, confirmación y evento (Buen Fin, Navidad y post-evento).
+Un cambio al modelo se adopta solo si mejora ≥ 0.2 pt de WAPE en desarrollo. Los periodos regulares y los de evento se reportan por separado, porque se comportan distinto.
+
+**Dónde verlo.** Cifras globales y por fold: pestaña **Modelo** del dashboard y `artifacts/metrics/`. Argumentación completa y pruebas empíricas: `scripts/10_comparacion_modelos.py`
+(secciones 6.1–6.3) y `outputs/10_comparacion_modelos/log.txt`. Origen de la meta y del piso de ruido: `docs/EDA.md`, sección «Implicaciones para las métricas».
+
 ### Decisiones metodológicas
 
-- **Por qué WAPE** (script 10): la decisión es la reposición semanal por tienda y categoría, así que el error se mide como
-  % de venta mal planeada en ese nivel. En estos datos MAE y RMSE dan el mismo ranking; WAPE se elige por
-  interpretación, comparabilidad entre niveles y ausencia de escala. MAPE se descarta porque flatera el subpronóstico
-  (comprobado con modelos sesgados a propósito); el sesgo se reporta aparte porque, solo, engaña.
+#### Por qué WAPE y no MAPE (con ejemplos)
+
+**La pregunta que contesta la métrica.** Reponer inventario es una decisión semanal por tienda y categoría. Lo que le importa al negocio es *cuántos pesos de venta se planearon mal*.
+Eso es exactamente WAPE: el error total dividido entre la venta total. MAPE contesta otra pregunta: «¿cuál fue el error porcentual promedio de cada fila?».
+Cuando todas las filas pesan igual de poco o de mucho las dos coinciden; en retail casi nunca es así.
+
+**Problema 1 · MAPE trata igual una tienda chica que una grande.**
+
+| | Venta real | Pronóstico | Error | Error % |
+|---|---|---|---|---|
+| Supercenter | $100,000 | $90,000 | $10,000 | 10 % |
+| Express | $1,000 | $2,000 | $1,000 | 100 % |
+
+- **MAPE** = (10 % + 100 %) / 2 = **55 %**. Una tienda que vende el 1 % del total decide la métrica.
+- **WAPE** = $11,000 / $101,000 = **10.9 %**. Cada peso de venta pesa lo mismo: refleja la operación real.
+
+Con 480 series de tamaños muy distintos (Express, Bodega, Supercenter) y días con muy poca venta, MAPE se vuelve inestable; con una venta de cero ni siquiera está definido.
+
+**Problema 2 · MAPE premia pronosticar de menos.** Imagina un producto que un día vende 50 unidades y al siguiente 150.
+
+| Pronóstico | MAPE | WAPE | Sesgo |
+|---|---|---|---|
+| 100 (el promedio, sin sesgo) | (50 % + 33 %) / 2 = **41.7 %** | 100 / 200 = **50 %** | 0 % |
+| 50 (la mitad del promedio) | (0 % + 67 %) / 2 = **33.3 %** | 100 / 200 = **50 %** | −50 % |
+
+Un modelo que *siempre se queda corto* parece 8 puntos «mejor» con MAPE, aunque dejaría sin producto al cliente el día de 150. El motivo: el error de un subpronóstico
+nunca puede pasar de 100 % de la venta (pronosticar 0), pero el de un sobrepronóstico no tiene tope. WAPE da el mismo valor en los dos casos, así que no recompensa el truco,
+y el sesgo (−50 %) lo deja a la vista. En inventario ese truco se traduce en **faltantes y ventas perdidas** que MAPE esconde.
+
+**Comprobación con los datos del proyecto** (script 10, sección 6.2): se tomó el LightGBM final y se le aplicó un sesgo a propósito, multiplicando todo su pronóstico por un factor.
+
+| Factor | Sesgo | WAPE | MAPE |
+|---|---|---|---|
+| × 0.90 (10 % de menos) | −10.3 % | 11.41 | **10.79** |
+| × 1.00 (modelo real) | −0.3 % | 7.31 | 7.26 |
+| × 1.10 (10 % de más) | +9.6 % | 11.15 | **11.78** |
+
+Con el mismo tamaño de error, MAPE da una nota casi 1 punto mejor al modelo que se queda corto que al que se pasa (10.8 contra 11.8), mientras que WAPE los califica casi igual (11.4 contra 11.2).
+Esa diferencia es puro artefacto de la métrica, no de la calidad del pronóstico.
+
+**Por qué no las demás.**
+- **MAE y RMSE** dependen de la escala en pesos: las series grandes los dominan y no se pueden comparar entre niveles de agregación (serie, tienda, total). RMSE además se dispara con los picos de Buen Fin y Navidad.
+- **sMAPE** corrige solo en parte la asimetría y sigue sin ponderar por volumen.
+- **R²** se infla por la diferencia de escala entre series (0.97 incluso con baselines flojos) y no distingue entre modelos.
+- **MASE/RMSSE** necesitan una escala de referencia por serie; el cociente entre el WAPE del modelo y el de `sma4` da la misma lectura sin ese costo.
+
+**Qué no se afirma.** En estos datos la métrica **no cambia el ranking de modelos**: WAPE, MAE y RMSE ordenan igual a los 8 modelos (correlación de Spearman 1.00) y MAPE solo intercambia posiciones entre los empatados.
+WAPE se elige por interpretación (porcentaje de venta mal planeada), comparabilidad entre niveles y falta de escala; no porque cambie la conclusión.
+
+**Por qué el sesgo va al lado.** WAPE es simétrico y no dice en qué dirección se falla, pero el sesgo solo también engaña: en eventos, ETS tiene el menor sesgo absoluto (2.8 %) y el peor WAPE (38.3 %) porque sus errores positivos y negativos se cancelan.
+Se reportan juntos. Y como quedarse corto cuesta distinto que pasarse, el WAPE asimétrico (faltante ×2) sirve de prueba de robustez y es el argumento para construir cuantiles p10/p90.
+
+#### Objeciones razonables a WAPE y cómo se atienden
+
+WAPE tampoco es una métrica perfecta. Estas son las objeciones que más se le hacen y qué responde el proyecto a cada una.
+
+1. **«Al ponderar por volumen, ignora lo de poco volumen aunque sea estratégico.»** Es cierto como propiedad de la métrica: un error en una serie pequeña casi no mueve el WAPE global.
+   Aquí pesa menos por dos razones. La decisión que se evalúa es la reposición, y ahí lo que cuenta son los pesos de venta mal planeados; y los datos no traen SKU ni margen, así que no hay productos nuevos
+   ni categorías de alto margen que priorizar. Además el WAPE no se reporta solo como un número global: se desglosa por categoría, formato de tienda y región
+   (`outputs/07_modelado_lightgbm/tabla_06.csv` y pestaña **Modelo**), donde el WAPE va de 7.3 % a 7.9 % en los 14 segmentos, sin ninguno rezagado.
+   Si el negocio contara con márgenes o con una lista de series estratégicas, bastaría ponderar el error por ese criterio en lugar de por venta (misma fórmula, otros pesos).
+2. **«WAPE no detecta sesgos sistemáticos: los errores pueden compensarse.»** Por eso el sesgo (Σ(ŷ − y) / Σy) se reporta **siempre al lado** y no en su lugar. Además se reporta **por segmento**, que es donde se descubre la compensación
+   entre categorías sobreestimadas y subestimadas: en los 14 segmentos de `tabla_06.csv` el sesgo no pasa de ±1 % (máximo 0.94 %). Donde sí hay un sesgo importante se dice abiertamente:
+   en eventos el modelo subpronostica el pico (≈ −17 % en promedio en los folds de evento) y eso es lo que justifica los cuantiles p10/p90 pendientes (ver «Limitaciones»).
+3. **«Un WAPE no es comparable entre periodos con volúmenes distintos (temporadas, inflación).»** Es cierto, y por eso **nunca se compara el WAPE de periodos distintos por sí solo**. Los periodos regulares y los de evento
+   (Buen Fin, Navidad, post-Navidad) se reportan por separado, y en cada fold el modelo se compara contra el baseline `sma4` **en ese mismo periodo**: la lectura es «cuántos puntos mejora a un baseline simple en las mismas fechas»,
+   no «el WAPE es 15 % y por tanto es bueno». El piso de ruido por nivel de agregación sirve de referencia adicional sobre qué error es alcanzable. La inflación casi no influye a un horizonte de 14 días.
+
+#### Otras decisiones
+
 - **Validación:** walk-forward con corte = inicio del fold − horizonte (14 días). Los folds de desarrollo, de
   confirmación y de evento se fijaron antes de mirar resultados; un cambio se adopta solo si mejora ≥ 0.2 pt en desarrollo.
 - **Criterios de aceptación fijados antes de ejecutar:** K1 (regulares) se cumple; K2 (top 2 en post-evento) **no** se cumple.
@@ -254,6 +346,13 @@ Correspondencia notebook → script: `01_eda` → 01 · `02_eda_complementario` 
 - Una sola ocurrencia de Buen Fin y Navidad: las ventanas de la capa de régimen son hipótesis y no pueden validarse hasta ver un segundo año.
 - En eventos, los baselines simples superan al ML; la política híbrida (baseline limpio con alerta en eventos y ML fuera de ellos) queda como trabajo futuro.
 - El dataset no trae costos, descuentos ni márgenes de las promociones: el análisis de uplift mide venta, no rentabilidad (la tabla de punto de equilibrio usa márgenes ilustrativos).
-- Pendientes: cuantiles p10/p90 y ensamble Ridge + LightGBM.
+- **Pendiente · cuantiles p10/p90 (rango de incertidumbre).** Hoy el modelo entrega un solo número por día y serie (el valor esperado). Los cuantiles darían además un rango:
+  el **p10** es un valor por debajo del cual la venta real cae solo el 10 % de las veces y el **p90** uno por encima del cual cae solo el 10 %; entre los dos queda el 80 % de los casos.
+  Por ejemplo, «se esperan $200,000 y lo más probable es que estén entre $170,000 y $240,000». Sirven para decidir cuánto inventario de seguridad llevar, porque cubrirse contra un faltante
+  (usar un valor cercano al p90) cuesta distinto que cubrirse contra un exceso (usar uno cercano al p10). Son sobre todo necesarios en eventos: el modelo subpronostica el pico del Buen Fin (≈ −59 %)
+  y la rampa navideña (≈ −20 % y −32 %), y sin cuantiles ese riesgo de faltante no queda cuantificado. Se evaluarían con pérdida *pinball* y cobertura (que el 80 % real caiga dentro del rango), no con WAPE.
+- **Pendiente · ensamble Ridge + LightGBM.** Un ensamble promedia (o pondera) los pronósticos de dos modelos. En los periodos regulares Ridge (un modelo lineal, simple y muy rápido) y LightGBM (árboles de decisión) empatan
+  (WAPE 7.26 % y 7.31 %) y Ridge gana a LightGBM en la mayoría de las semanas regulares. Como son modelos de naturaleza distinta, sus errores no coinciden del todo y combinarlos podría bajar el error de los dos.
+  Falta probarlo en el backtest con la misma validación; no se asume que mejore. Hasta entonces se usa LightGBM porque en los folds de evento es claramente mejor que Ridge (WAPE medio 25.4 % contra 35.3 % sin capa de régimen) y es el modelo que ya lleva la capa de régimen.
 
 Proceso de trabajo y uso de herramientas de AI: ver [`PROCESS.md`](PROCESS.md).

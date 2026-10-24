@@ -138,8 +138,71 @@ def _desglose(fc: pd.DataFrame, sid: str | None) -> None:
                 st.markdown(f"**{title}**")
                 ui.show(ui.style_fig(fig, height=260).update_layout(margin=dict(l=8, r=8, t=8, b=8)))
 
+def _csv_transparente(fc: pd.DataFrame, hist: pd.DataFrame, cat: str | None, sid: str | None, n_series: int) -> bytes:
+    """CSV de descarga: primero la explicación de cómo se llegó al pronóstico (líneas ``#``) y luego los datos.
 
-def _detalle(fc: pd.DataFrame, sid: str | None) -> None:
+    Las líneas de explicación empiezan con ``#`` y no llevan comas, para que se lean bien en Excel y se puedan
+    omitir al cargar con ``pd.read_csv(..., comment="#")``.
+    """
+    spec = D.model_spec()
+    hp = spec["hiperparametros"]
+    imp = D.importancia_ganancia().head(5)
+    wape, hm = D.wape_historico(cat, sid), D.headline_metrics()
+    nivel = ("serie x semana" if (cat and sid) else "tienda x semana" if sid else "categoria x semana" if cat else "total x semana")
+    ultimo = hist["date"].max()
+    daily = fc.groupby("date")["pred_amount"].sum()
+    obs_mean = hist.groupby("date")["amount_total"].sum().tail(14).mean()
+    total, units = fc["pred_amount"].sum(), fc["pred_units"].sum()
+    top = "; ".join(f"{f} ({g:.1f} %)" for f, g in zip(imp["feature"], imp["% ganancia"]))
+    sel = (f"categoria = {cat or 'todas'}; tienda = {sid or 'todas'} ({n_series} serie(s) tienda x categoria)")
+    L = [
+        "PRONOSTICO DE DEMANDA A 14 DIAS - EXPLICACION DE COMO SE OBTUVO Y RESULTADO",
+        "",
+        "1. QUE SE PRONOSTICA",
+        f"Seleccion: {sel}.",
+        f"Ultimo dia con datos reales: {ultimo.date()}. Periodo pronosticado: {fc['date'].min().date()} a {fc['date'].max().date()} (14 dias).",
+        "Se pronostica la venta diaria en MXN (monto) por tienda y categoria. Cada fila del resultado es un dia de una serie tienda x categoria.",
+        "",
+        "2. COMO SE CALCULO",
+        f"Modelo: {spec['modelo']}. Es un modelo directo a {spec['horizonte_dias']} dias: no pronostica dia por dia encadenando predicciones.",
+        f"Entrenado con datos hasta {spec['entrenado_hasta']}. Usa {spec['n_features']} variables y {hp['n_estimators']} arboles (semilla {spec['semilla']}).",
+        "Cada variable usa solo informacion con al menos 14 dias de antiguedad respecto al dia pronosticado; por eso no hay fuga de informacion del futuro.",
+        "Variables: calendario (dia de la semana; quincena; feriados; Semana Santa; Buen Fin; Navidad); ventas pasadas (rezagos de 14 a 35 dias; promedios moviles de 7 y 28 dias; promedio del mismo dia de la semana; tendencia); promocion; y atributos de la tienda (formato; nivel socioeconomico) y categoria.",
+        f"Las variables que mas pesan (ganancia del modelo): {top}. Es decir el pronostico se apoya sobre todo en lo que se vendio en el mismo dia de la semana en semanas anteriores.",
+        "Capa de regimen: ajusta la prediccion solo despues del Buen Fin y de Navidad. En este horizonte no hay esos eventos y el factor es 1.0 en todas las filas (columna factor_regimen).",
+        "Promociones: se supone que no hay promocion planeada. El analisis de uplift del proyecto muestra que en promedio las promociones no mueven la venta de forma medible.",
+        "Unidades: el modelo pronostica monto. unidades_estimadas = monto_mxn / precio_unitario_mxn, con el precio medio por unidad de esa tienda y categoria de las ultimas 8 semanas. Asume que el precio no cambia.",
+        "",
+        "3. QUE TAN CONFIABLE ES",
+        (f"Error historico (WAPE semanal en periodos regulares; backtest) para esta seleccion a nivel {nivel}: {wape:.1f} %." if wape is not None
+         else "Error historico para esta seleccion: no disponible (ejecuta el paso 08 del pipeline)."),
+        f"Referencia de toda la cadena: WAPE {hm['wape_reg']:.1f} % a nivel serie x semana; mejora de {abs(hm['vs_sma4_pts']):.1f} puntos frente a un promedio simple de 4 semanas.",
+        "WAPE = suma de errores absolutos / suma de ventas reales. Un WAPE de 10 % significa que en promedio el pronostico se desvia 10 % de la venta real.",
+        "Este pronostico no incluye intervalos de confianza. Los errores diarios individuales suelen ser mayores que el WAPE semanal.",
+        "",
+        "4. RESUMEN DEL RESULTADO",
+        f"Venta pronosticada a 14 dias: {total:.0f} MXN. Unidades estimadas: {units:.0f}.",
+        f"Venta diaria media pronosticada: {daily.mean():.0f} MXN frente a {obs_mean:.0f} MXN observados en los 14 dias previos ({(daily.mean() / obs_mean - 1) * 100:+.1f} %).",
+        "",
+        "5. COLUMNAS DEL DETALLE",
+        "fecha | tienda | categoria | formato | region | nse: identifican el dia y la serie.",
+        "monto_mxn: venta pronosticada del dia (prediccion del modelo x factor_regimen).",
+        "factor_regimen: ajuste por Buen Fin o Navidad (1.0 = sin ajuste).",
+        "precio_unitario_mxn: precio medio por unidad usado para estimar unidades.",
+        "unidades_estimadas: monto_mxn / precio_unitario_mxn.",
+        "",
+        "6. RESULTADO (detalle diario)",
+    ]
+    head = "\n".join(("# " + ln).rstrip().replace(",", ";") for ln in L) + "\n"
+    out = fc[["date", "store_id", "category", "store_format", "region", "nse", "pred_amount", "reset_factor", "price_unit", "pred_units"]].rename(
+        columns={"date": "fecha", "store_id": "tienda", "category": "categoria", "store_format": "formato", "pred_amount": "monto_mxn",
+                 "reset_factor": "factor_regimen", "price_unit": "precio_unitario_mxn", "pred_units": "unidades_estimadas"}
+    ).round({"monto_mxn": 1, "factor_regimen": 3, "precio_unitario_mxn": 2, "unidades_estimadas": 1})
+    out["fecha"] = out["fecha"].dt.strftime("%Y-%m-%d")
+    return (head + out.to_csv(index=False)).encode("utf-8-sig")
+
+
+def _detalle(fc: pd.DataFrame, hist: pd.DataFrame, cat: str | None, sid: str | None, n_series: int) -> None:
     ui.section("Detalle y descarga")
     if not sid:
         top = (fc.groupby(["store_id", "store_format", "region", "nse"], as_index=False)
@@ -149,11 +212,9 @@ def _detalle(fc: pd.DataFrame, sid: str | None) -> None:
         st.markdown("**Las 15 tiendas con mayor venta pronosticada**")
         st.dataframe(top, hide_index=True, width="stretch", column_config={
             "Monto (MXN)": st.column_config.NumberColumn(format="$%,.0f"), "Unidades": st.column_config.NumberColumn(format="%,.0f")})
-    out = fc[["date", "store_id", "category", "store_format", "region", "nse", "pred_amount", "pred_units"]].rename(
-        columns={"date": "fecha", "store_id": "tienda", "category": "categoria", "store_format": "formato", "nse": "nse",
-                 "pred_amount": "monto_mxn", "pred_units": "unidades_estimadas"}).round({"monto_mxn": 1, "unidades_estimadas": 1})
-    st.download_button("Descargar pronóstico diario (CSV)", out.to_csv(index=False).encode("utf-8-sig"),
-                       file_name="pronostico_14_dias.csv", mime="text/csv")
+    csv = _csv_transparente(fc, hist, cat, sid, n_series)
+    st.download_button("Descargar pronóstico diario (CSV)", csv, file_name="pronostico_14_dias.csv", mime="text/csv")
+    st.caption("El archivo abre con una explicación de cómo se obtuvo el pronóstico (líneas que empiezan con #) y después los datos.")
 
 
 def _notas() -> None:
@@ -189,5 +250,5 @@ def render() -> None:
     _kpis(fc, hist, cat, sid, n_series)
     _serie_diaria(fc, hist)
     _desglose(fc, sid)
-    _detalle(fc, sid)
+    _detalle(fc, hist, cat, sid, n_series)
     _notas()

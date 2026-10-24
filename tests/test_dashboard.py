@@ -1,6 +1,7 @@
 """Pruebas del dashboard: lectura de artefactos, cifras de portada y arranque de la app."""
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
 from src.dashboard import config as C
@@ -56,6 +57,23 @@ def test_simulador_selecciones():
     at.radio(key="sim_metric").set_value("Unidades").run()
     at.radio(key="sim_base").set_value("Promedio por tienda").run()
     assert not at.exception
+
+
+def test_csv_simulador_explica_y_luego_resultado():
+    import io
+    from src.dashboard import tab_simulador as T
+    fc, hist = D.pronostico(), D.historia()
+    cat, sid = "Electronica", "STR_005"
+    f, h = fc[(fc["category"] == cat) & (fc["store_id"] == sid)], hist[(hist["category"] == cat) & (hist["store_id"] == sid)]
+    txt = T._csv_transparente(f, h, cat, sid, 1).decode("utf-8-sig")
+    lineas = txt.splitlines()
+    n_exp = sum(1 for ln in lineas if ln.startswith("#"))
+    assert n_exp > 20 and all(ln.startswith("#") for ln in lineas[:n_exp])      # primero la explicación, luego los datos
+    assert "COMO SE CALCULO" in txt and "WAPE" in txt and "Seleccion: categoria = Electronica" in txt
+    df = pd.read_csv(io.StringIO(txt), comment="#")
+    assert len(df) == len(f) == 14
+    assert abs(df["monto_mxn"].sum() - f["pred_amount"].sum()) < 14                # redondeo a 0.1
+    assert (df["unidades_estimadas"] - df["monto_mxn"] / df["precio_unitario_mxn"]).abs().max() < 1
 
 
 def test_uplift_tablas_y_pestana():
